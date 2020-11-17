@@ -288,12 +288,12 @@ def migratePolicy(policyIDs, src_url, t1_key, dst_url, t2_key):
 	f_lbl.pack()
 
 	progressVal(x, bar, style)
-
 	#FUNCTIONS
 	antimalwareconfig, allofpolicy = GetPolicy(f_policyIDs, src_url, t1_key)
 	x+=2.5
 	v.set("Fetching Policy/s on Source Tenant...")
 	incrementBar(v, f_lbl, x, bar, style)
+	
 	directorylist, fileextentionlist, filelist, allamconfig = AMconfigtenant1(antimalwareconfig, src_url, t1_key)
 	x+=2.5
 	v.set("Fetching Policy/s on Source Tenant...")
@@ -352,6 +352,7 @@ def migratePolicy(policyIDs, src_url, t1_key, dst_url, t2_key):
 	x+=2.5
 	v.set("Fetching IP List/s in Source Tenant...")
 	incrementBar(v, f_lbl, x, bar, style)
+	
 	#IP List transfer
 	t1iplistall, t1iplistname, t1iplistid = IpListGet(src_url, t1_key)
 	x+=2.5
@@ -474,7 +475,7 @@ def migratePolicy(policyIDs, src_url, t1_key, dst_url, t2_key):
 	#replace old IM rule with tenant 2
 	allofpolicy = IMReplace(allofpolicy, allimruleidnew1, allimruleidnew2, imruleid, allimruleidold, allimcustomrule)
 	#Removing proxy configuration
-	allofpolicy = ProxyEdit(allofpolicy)
+	allofpolicy = ProxyEdit(allofpolicy, t1iplistid, t2iplistid, t1portlistid, t2portlistid)
 	#create Policy to tenant 2
 	AddPolicy(allofpolicy, dst_url, t2_key)
 	x+=5
