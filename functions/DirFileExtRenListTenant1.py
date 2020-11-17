@@ -1,0 +1,108 @@
+import sys
+import os
+import time
+from time import sleep
+import requests
+import urllib3
+
+cert = False
+
+def DirListTenant1(directorylist, url_link_final, tenant1key):
+    alldirectory = []
+    print ("Getting lists from Tenant 1, if any.")                
+    for dirlist in directorylist:
+        payload  = {}
+        url = url_link_final + 'api/directorylists/' + str(dirlist)
+        headers = {
+            "api-secret-key": tenant1key,
+            "api-version": "v1",
+            "Content-Type": "application/json",
+        }
+        response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
+        describe = str(response.text)
+        #describe = describe[:-1]
+        #describe = describe[2:]
+        alldirectory.append(describe)
+    print("Tenant1 directory list")
+    print(directorylist)
+    return alldirectory
+
+def FileExtensionListTenant1(fileextentionlist, url_link_final, tenant1key):
+    allfileextention = []
+    for dirlist in fileextentionlist:
+        payload  = {}
+        url = url_link_final + 'api/fileextensionlists/' + str(dirlist)
+        headers = {
+            "api-secret-key": tenant1key,
+            "api-version": "v1",
+            "Content-Type": "application/json",
+        }
+        response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
+        describe = str(response.text)
+        #describe = describe[:-1]
+        #describe = describe[2:]
+        allfileextention.append(describe)
+    print("Tenant1 file extention list")
+    print(fileextentionlist)
+    return allfileextention
+    
+def FileListTenant1(filelist, url_link_final, tenant1key):
+    allfilelist = []
+    for dirlist in filelist:
+        payload  = {}
+        url = url_link_final + 'api/filelists/' + str(dirlist)
+        headers = {
+            "api-secret-key": tenant1key,
+            "api-version": "v1",
+            "Content-Type": "application/json",
+        }
+        response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
+        describe = str(response.text)
+        #describe = describe[:-1]
+        #describe = describe[2:]
+        allfilelist.append(describe)
+    print("Tenant1 file list")
+    print(filelist)
+    return allfilelist
+
+def RenameLists(alldirectory, allfilelist, allfileextention):
+    count = 0
+    for describe in alldirectory:
+        index = describe.find('name')
+        if index != -1:
+            indexpart = describe[index+5:]
+            startIndex = indexpart.find('\"')
+            if startIndex != -1: #i.e. if the first quote was found
+                endIndex = indexpart.find(',', startIndex + 1)
+                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                    indexid = indexpart[startIndex+1:endIndex-1]
+                    newname = indexid + " - Migrated"
+                    alldirectory[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]                  
+        count = count + 1
+    count = 0
+    for describe in allfilelist:
+        index = describe.find('name')
+        if index != -1:
+            indexpart = describe[index+5:]
+            startIndex = indexpart.find('\"')
+            if startIndex != -1: #i.e. if the first quote was found
+                endIndex = indexpart.find(',', startIndex + 1)
+                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                    indexid = indexpart[startIndex+1:endIndex-1]
+                    newname = indexid + " - Migrated"
+                    allfilelist[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
+        count = count + 1
+    count = 0
+    for describe in allfileextention:
+        index = describe.find('name')
+        if index != -1:
+            indexpart = describe[index+5:]
+            startIndex = indexpart.find('\"')
+            if startIndex != -1: #i.e. if the first quote was found
+                endIndex = indexpart.find(',', startIndex + 1)
+                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                    indexid = indexpart[startIndex+1:endIndex-1]
+                    newname = indexid + " - Migrated"
+                    allfileextention[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]  
+        count = count + 1
+    return alldirectory, allfilelist, allfileextention
