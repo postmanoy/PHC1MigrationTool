@@ -12,7 +12,7 @@ def GetPolicy(policyIDs, url_link_final, tenant1key):
     allofpolicy = []
     i = 0
     print ("Getting Policy from Tenant 1")
-    for part in policyIDs:
+    for count, part in enumerate(policyIDs):
         
         payload  = {}
         url = url_link_final + 'api/policies/' + str(part)
@@ -26,9 +26,7 @@ def GetPolicy(policyIDs, url_link_final, tenant1key):
         describe = str(response.text)
         i = i + 1
         allofpolicy.append(describe)
-        print (str(part))
-
-
+        print ("#" + str(count) + " Policy ID: " + str(part))
         rtscan = describe.find('realTimeScanConfigurationID')
         if rtscan != -1:
             rtpart = describe[rtscan+28:]

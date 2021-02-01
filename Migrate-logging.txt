@@ -1,0 +1,5 @@
+Getting Policy from Tenant 1
+430
+Tenant 1 Anti-Malware config ID: 199
+Tenant 1 Anti-Malware config ID: 2
+Tenant 1 Anti-Malware config ID: 3

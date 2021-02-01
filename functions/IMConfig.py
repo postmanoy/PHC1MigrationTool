@@ -39,8 +39,8 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
     allimruleidnew1 =[]
     allimruleidold = []
     allimcustomrule =[]
-    print("Searching IM rules in Tenant 2...")                    
-    for dirlist in imruleid:
+    print("Searching IM rules in Tenant 1...")                    
+    for count, dirlist in enumerate(imruleid):
         payload  = {}
         url = url_link_final + 'api/integritymonitoringrules/' + str(dirlist)
         headers = {
@@ -60,7 +60,10 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-2]
                     allimrulename.append(str(indexid))
-                    
+                    print("#" + str(count) + " IPS rule name: " + indexid)
+        print("#" + str(count) + " IM rule ID: " + dirlist)
+    print("Done!")        
+    print("Searching and Modifying IM rule in Tenant 2...")        
     for count, dirlist in enumerate(allimrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/integritymonitoringrules/search'
@@ -80,11 +83,21 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                 indexpart = describe[index+4:]
                 startIndex = indexpart.find(':')
                 if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find('}', startIndex + 1)
+                    endIndex = indexpart.find(',', startIndex + 1)
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allimruleidnew1.append(str(indexid))
                         allimruleidold.append(count)
+                        print("#" + str(count) + " IM rule ID: " + str(indexid))
+                    else:
+                        endIndex = indexpart.find('}', startIndex + 1)
+                        if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                            indexid = indexpart[startIndex+1:endIndex]
+                            allimruleidnew1.append(str(indexid))
+                            allimruleidold.append(count)
+                            print("#" + str(count) + " IM rule ID: " + indexid)
+            else:
+                print(describe)
         else:
             allimcustomrule.append(count)
     print("Tenant 2 default IM rules")
@@ -94,7 +107,8 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
 def IMCustom(allimrule, allimcustomrule, url_link_final_2, tenant2key):
     allimruleidnew2 = []
     if allimcustomrule:
-        for indexnum in allimcustomrule:
+        print("Creating new custom IM rule in Tenant 2...") 
+        for count, indexnum in enumerate(allimcustomrule):
             payload = allimrule[indexnum]
             url = url_link_final_2 + 'api/integritymonitoringrules'
             headers = {
@@ -113,6 +127,9 @@ def IMCustom(allimrule, allimcustomrule, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allimruleidnew2.append(str(indexid))
+                        print("#" + str(count) + " IM rule ID: " + indexid)
+            else:
+                print(describe)
     print("all new im rule custom rule")
     print(allimruleidnew2)
     return allimruleidnew2

@@ -14,7 +14,7 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
     fileextentionlist = []
     filelist = []
     print ("Getting Anti-Malware configuration from Tenant 1")
-    for amconfig in antimalwareconfig:
+    for count, amconfig in enumerate(antimalwareconfig):
         if int(amconfig) != 0:
             payload  = {}
             url = url_link_final + 'api/antimalwareconfigurations/' + str(amconfig)
@@ -27,8 +27,6 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
             
             describe = str(response.text)
             allamconfig.append(describe)
-            print(str(amconfig))
-
             index = describe.find('directoryListID')
             if index != -1:
                 indexpart = describe[index+16:]
@@ -73,7 +71,7 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
                     endIndex = indexpart.find(',', startIndex + 1)
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
-                        filelist.append(str(indexid))            
+                        filelist.append(str(indexid))           
             index = describe.find('excludedProcessImageFileListID')
             if index != -1:
                 indexpart = describe[index+31:]
@@ -83,6 +81,7 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         filelist.append(str(indexid)) 
+            print("#" + str(count) + " Anti-Malware Config ID: " + str(amconfig))
     directorylist = list(dict.fromkeys(directorylist))
     fileextentionlist = list(dict.fromkeys(fileextentionlist))
     filelist = list(dict.fromkeys(filelist))

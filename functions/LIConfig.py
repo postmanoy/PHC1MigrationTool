@@ -40,8 +40,8 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
     allliruleidnew1 = []
     allliruleidold = []
     alllicustomrule = []
-    print("Searching LI rules in Tenant 2...")                  
-    for dirlist in liruleid:
+    print("Searching LI rules in Tenant 1...")                  
+    for count, dirlist in enumerate(liruleid):
         payload  = {}
         url = url_link_final + 'api/loginspectionrules/' + str(dirlist)
         headers = {
@@ -61,6 +61,10 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-2]
                     alllirulename.append(str(indexid))
+                    print("#" + str(count) + " LI rule name: " + indexid)
+        print("#" + str(count) + " LI rule ID: " + dirlist)
+    print("Done!")        
+    print("Searching and Modifying LI rule in Tenant 2...")  
     for count, dirlist in enumerate(alllirulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/loginspectionrules/search'
@@ -83,6 +87,9 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                         indexid = indexpart[startIndex+1:endIndex]
                         allliruleidnew1.append(str(indexid))
                         allliruleidold.append(count)
+                        print("#" + str(count) + " LI rule ID: " + indexid)
+            else:
+                print(describe)
         else:
             alllicustomrule.append(count)
     print("Tenant 2 default LI rules")
@@ -92,7 +99,8 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
 def LICustom(alllirule, alllicustomrule, url_link_final_2, tenant2key):
     allliruleidnew2 = []
     if alllicustomrule:
-        for indexnum in alllicustomrule:
+        print("Creating new custom LI rule in Tenant 2...")  
+        for count, indexnum in enumerate(alllicustomrule):
             payload = alllirule[indexnum]
             url = url_link_final_2 + 'api/loginspectionrules'
             headers = {
@@ -111,6 +119,9 @@ def LICustom(alllirule, alllicustomrule, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allliruleidnew2.append(str(indexid))
+                        print("#" + str(count) + " LI rule ID: " + indexid)
+            else:
+                print(describe)
     print("all new LI rule custom rule")
     print(allliruleidnew2)
     return allliruleidnew2

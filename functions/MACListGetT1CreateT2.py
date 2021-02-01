@@ -34,28 +34,31 @@ def MacListGet(url_link_final, tenant1key):
                     indexid = indexpart[startIndex:endIndex+1]
                     t1maclistall.append(str(indexid))
                     indexpart = indexpart[endIndex:]
+    count = 0
     while index != -1:
-            index = describe2.find('\"name\"')
-            if index != -1:
-                indexpart = describe2[index+6:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-1]
-                        t1maclistname.append(str(indexid))
-                        describe2 = indexpart[endIndex:]
-                        index = describe2.find('\"ID\"')
-                        if index != -1:
-                            indexpart = describe2[index+3:]
-                            startIndex = indexpart.find(':')
-                            if startIndex != -1: #i.e. if the first quote was found
-                                endIndex = indexpart.find('}', startIndex + 1)
-                                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                    indexid = indexpart[startIndex+1:endIndex]
-                                    t1maclistid.append(str(indexid))
-                                    print(indexid)
-                                    describe2 = indexpart[endIndex:]
+        index = describe2.find('\"name\"')
+        if index != -1:
+            indexpart = describe2[index+6:]
+            startIndex = indexpart.find('\"')
+            if startIndex != -1: #i.e. if the first quote was found
+                endIndex = indexpart.find(',', startIndex + 1)
+                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                    indexid = indexpart[startIndex+1:endIndex-1]
+                    t1maclistname.append(str(indexid))
+                    print("#" + str(count) + " Mac List name: " + indexid)
+                    describe2 = indexpart[endIndex:]
+                    index = describe2.find('\"ID\"')
+                    if index != -1:
+                        indexpart = describe2[index+3:]
+                        startIndex = indexpart.find(':')
+                        if startIndex != -1: #i.e. if the first quote was found
+                            endIndex = indexpart.find('}', startIndex + 1)
+                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                                indexid = indexpart[startIndex+1:endIndex]
+                                t1maclistid.append(str(indexid))
+                                print("#" + str(count) + " Mac List ID: " + indexid)
+                                describe2 = indexpart[endIndex:]
+        count += 1
     #print(t1maclistid)
     print("Done!")
     return t1maclistall, t1maclistname, t1maclistid
@@ -92,7 +95,7 @@ def MacListCreate(t1maclistall, t1maclistname, url_link_final_2, tenant2key):
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                         t2maclistid.append(str(indexid))
-                        print(indexid)
+                        print("#" + str(count) + " MAC List ID: " + indexid)
         else:
             payload = t1maclistall[count]
             url = url_link_final_2 + 'api/maclists'
@@ -112,7 +115,9 @@ def MacListCreate(t1maclistall, t1maclistname, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         t2maclistid.append(str(indexid))
-                        print(indexid)
+                        print("#" + str(count) + " MAC List ID: " + indexid)
+            else:
+                print(describe)
     #print("Finished Transfering All Mac List.")
     #print(t2maclistid)
     print("Done!")

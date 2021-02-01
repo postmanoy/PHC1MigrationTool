@@ -51,8 +51,8 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
     allfirewallruleidold = []
     allfirewallcustomrule = []
 #describe Firewall rules
-    print("Searching and Modifying Firewall rules in Tenant 2...")      
-    for dirlist in firewallruleid:
+    print("Searching and Modifying Firewall rules in Tenant 1...")      
+    for count, dirlist in enumerate(firewallruleid):
         payload  = {}
         url = url_link_final + 'api/firewallrules/' + str(dirlist)
         headers = {
@@ -72,9 +72,10 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-1]
                     allfirewallrulename.append(str(indexid))
-        print(dirlist)
+                    print("#" + str(count) + " Firewall rule name: " + str(indexid))
+        print("#" + str(count) + " Firewall rule ID: " + dirlist)
     print("Done!")
-
+    print("Replacing firewall rule IDs configuration in tenant 2...")
     for count, describe in enumerate(allfirewallrule):
         index3 = describe.find('sourceIPListID')
         if index3 != -1:
@@ -149,7 +150,6 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                     listpart = indexid5.replace(indexid1, t2portlistid[indexnum])
                     describe = describe.replace(indexid5, listpart)
         allfirewallrule[count] = describe
-    print("Searching for firewall rule IDs in tenant 2...")
     for count, dirlist in enumerate(allfirewallrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/firewallrules/search'
@@ -181,7 +181,7 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                         "Content-Type": "application/json",
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
-                        print(indexid)
+                        print("#" + str(count) + " Firewall rule ID: " + indexid)
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
@@ -197,13 +197,12 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                             "Content-Type": "application/json",
                             }
                             response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
-                            print(indexid)
+                            print("#" + str(count) + " Firewall rule ID: " + indexid)
+            else:
+                print(describe)
 
         else:
             allfirewallcustomrule.append(count)
-
-
-
     #print("Tenant 2 default firewall rules")
     #print(allfirewallruleidnew1)
     print("Done!")
@@ -213,7 +212,7 @@ def FirewallCustom(allfirewallrule, allfirewallcustomrule, url_link_final_2, ten
     allfirewallruleidnew2 = []
     if allfirewallcustomrule:
         print("Creating Firewall Custom Rule...")
-        for indexnum in allfirewallcustomrule:
+        for count, indexnum in enumerate(allfirewallcustomrule):
             payload = allfirewallrule[indexnum]
             url = url_link_final_2 + 'api/firewallrules'
             headers = {
@@ -232,13 +231,15 @@ def FirewallCustom(allfirewallrule, allfirewallcustomrule, url_link_final_2, ten
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allfirewallruleidnew2.append(str(indexid))
-                        print(indexid)
+                        print("#" + str(count) + " Firewall rule ID: " + indexid)
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
                             allfirewallruleidnew2.append(str(indexid))
-                            print(indexid)
+                            print("#" + str(count) + " Firewall rule ID: " + indexid)
+            else:
+                print(describe)
     #print("all new firewall rule custom rule")
     #print(allfirewallruleidnew2)
         print("Done!")

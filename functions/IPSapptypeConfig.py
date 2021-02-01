@@ -39,8 +39,7 @@ def IPSappDescribe(ipsappid, t1portlistid, t2portlistid, url_link_final, tenant1
     allipsappidnew1 = []
     allipsappidold = []
     allipscustomapp = []
-
-    print("Searching IPS application types in Tenant 2...")  
+    print("Searching IPS application types in Tenant 1...")  
     for count, dirlist in enumerate(ipsappid):
         payload  = {}
         url = url_link_final + 'api/applicationtypes/' + str(dirlist)
@@ -61,6 +60,7 @@ def IPSappDescribe(ipsappid, t1portlistid, t2portlistid, url_link_final, tenant1
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-1]
                     allipsappname.append(str(indexid))
+                    print("#" + str(count) + " IPS Application Type name: " + str(indexid))
         index3 = describe.find('portListID')
         if index3 != -1:
             indexpart = describe[index3+10:]
@@ -73,6 +73,9 @@ def IPSappDescribe(ipsappid, t1portlistid, t2portlistid, url_link_final, tenant1
                     indexnum = t1portlistid.index(indexid1)
                     listpart = indexid5.replace(indexid1, t2portlistid[indexnum])
                     allipsapp[count] = describe.replace(indexid5, listpart)
+        print("#" + str(count) + " IPS Application Type ID: " + dirlist)
+    print("Done!")
+    print("Searching and Modifying IPS application types in Tenant 2...")       
     for count, dirlist in enumerate(allipsappname):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/applicationtypes/search'
@@ -95,7 +98,6 @@ def IPSappDescribe(ipsappid, t1portlistid, t2portlistid, url_link_final, tenant1
                         indexid = indexpart[startIndex+1:endIndex]
                         allipsappidnew1.append(str(indexid))
                         allipsappidold.append(count)
-
                         payload = allipsapp[count]
                         url = url_link_final_2 + 'api/applicationtypes/' + str(indexid)
                         headers = {
@@ -104,16 +106,21 @@ def IPSappDescribe(ipsappid, t1portlistid, t2portlistid, url_link_final, tenant1
                         "Content-Type": "application/json",
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                        print("#" + str(count) + " IPS Application Type ID: " + indexid)
+            else:
+                print(describe)
         else:
             allipscustomapp.append(count)
+    print("Done!")
     print("Tenant 2 default IPS application type")
     print(allipsappidnew1)
     return allipsapp, allipsappidnew1, allipsappidold, allipscustomapp
 
 def IPSappCustom(allipsapp, allipscustomapp, url_link_final_2, tenant2key):
     allipsappidnew2 = []
+    print("Creating IPS application Type Custom Rule...")
     if allipscustomapp:
-        for indexnum in allipscustomapp:
+        for count, indexnum in enumerate(allipscustomapp):
             payload = allipsapp[indexnum]
             url = url_link_final_2 + 'api/applicationtypes'
             headers = {
@@ -132,6 +139,10 @@ def IPSappCustom(allipsapp, allipscustomapp, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allipsappidnew2.append(str(indexid))
+                        print("#" + str(count) + " IPS Application Type ID: " + str(indexid))
+            else:
+                print(describe)
+    print("Done!")
     print("all new IPS custom application")
     print(allipsappidnew2)
     return allipsappidnew2
