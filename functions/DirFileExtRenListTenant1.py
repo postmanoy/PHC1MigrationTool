@@ -9,7 +9,7 @@ cert = False
 
 def DirListTenant1(directorylist, url_link_final, tenant1key):
     alldirectory = []
-    print ("Getting lists from Tenant 1, if any.")                
+    print ("Getting lists from Tenant 1, if any.", flush=True)                
     for dirlist in directorylist:
         payload  = {}
         url = url_link_final + 'api/directorylists/' + str(dirlist)
@@ -23,8 +23,8 @@ def DirListTenant1(directorylist, url_link_final, tenant1key):
         #describe = describe[:-1]
         #describe = describe[2:]
         alldirectory.append(describe)
-    print("Tenant1 directory list")
-    print(directorylist)
+    print("Tenant1 directory list", flush=True)
+    print(directorylist, flush=True)
     return alldirectory
 
 def FileExtensionListTenant1(fileextentionlist, url_link_final, tenant1key):
@@ -42,8 +42,8 @@ def FileExtensionListTenant1(fileextentionlist, url_link_final, tenant1key):
         #describe = describe[:-1]
         #describe = describe[2:]
         allfileextention.append(describe)
-    print("Tenant1 file extention list")
-    print(fileextentionlist)
+    print("Tenant1 file extention list", flush=True)
+    print(fileextentionlist, flush=True)
     return allfileextention
     
 def FileListTenant1(filelist, url_link_final, tenant1key):
@@ -61,8 +61,8 @@ def FileListTenant1(filelist, url_link_final, tenant1key):
         #describe = describe[:-1]
         #describe = describe[2:]
         allfilelist.append(describe)
-    print("Tenant1 file list")
-    print(filelist)
+    print("Tenant1 file list", flush=True)
+    print(filelist, flush=True)
     return allfilelist
 
 def RenameLists(alldirectory, allfilelist, allfileextention):

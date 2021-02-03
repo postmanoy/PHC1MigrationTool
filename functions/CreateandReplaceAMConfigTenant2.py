@@ -9,7 +9,7 @@ cert = False
 
 def AmconfigTenant2(allamconfig, url_link_final_2, tenant2key):
     allamconfignew = []
-    print("Creating Anti-Malware Configuration to Tenant2")
+    print("Creating Anti-Malware Configuration to Tenant2", flush=True)
     for count, dirlist in enumerate(allamconfig):
         rename = 1
         namecheck = 1
@@ -63,8 +63,8 @@ def AmconfigTenant2(allamconfig, url_link_final_2, tenant2key):
                                 allamconfignew.append(str(indexid))   
                                 namecheck = -1
                 
-    print("New AM Config ID")
-    print(allamconfignew)
+    print("New AM Config ID", flush=True)
+    print(allamconfignew, flush=True)
     return allamconfignew
 
 def AmReplaceConfig(allofpolicy, antimalwareconfig, allamconfignew):

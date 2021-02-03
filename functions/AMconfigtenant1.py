@@ -13,7 +13,7 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
     directorylist = []
     fileextentionlist = []
     filelist = []
-    print ("Getting Anti-Malware configuration from Tenant 1")
+    print ("Getting Anti-Malware configuration from Tenant 1", flush=True)
     for count, amconfig in enumerate(antimalwareconfig):
         if int(amconfig) != 0:
             payload  = {}
@@ -81,7 +81,7 @@ def AMconfigtenant1(antimalwareconfig, url_link_final, tenant1key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         filelist.append(str(indexid)) 
-            print("#" + str(count) + " Anti-Malware Config ID: " + str(amconfig))
+            print("#" + str(count) + " Anti-Malware Config ID: " + str(amconfig), flush=True)
     directorylist = list(dict.fromkeys(directorylist))
     fileextentionlist = list(dict.fromkeys(fileextentionlist))
     filelist = list(dict.fromkeys(filelist))

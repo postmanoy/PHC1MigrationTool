@@ -11,7 +11,7 @@ def StatefulGet(url_link_final, tenant1key):
     t1statefulall = []
     t1statefulname = []
     t1statefulid = []
-    print("Getting All Stateful Configuration...")
+    print("Getting All Stateful Configuration...", flush=True)
     payload  = {}
     url = url_link_final + 'api/statefulconfigurations'
     headers = {
@@ -45,7 +45,7 @@ def StatefulGet(url_link_final, tenant1key):
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-1]
                     t1statefulname.append(str(indexid))
-                    print("#" + str(count) + " Stateful Config name: " + str(indexid))
+                    print("#" + str(count) + " Stateful Config name: " + str(indexid), flush=True)
                     describe2 = indexpart[endIndex:]
                     index = describe2.find('\"ID\"')
                     if index != -1:
@@ -57,16 +57,16 @@ def StatefulGet(url_link_final, tenant1key):
                                 indexid = indexpart[startIndex+1:endIndex]
                                 t1statefulid.append(str(indexid))
                                 describe2 = indexpart[endIndex:]
-                                print("#" + str(count) + " Stateful Config ID: " + indexid)
+                                print("#" + str(count) + " Stateful Config ID: " + indexid, flush=True)
         count += 1
 
     #print(t1statefulid)
-    print("Done")
+    print("Done", flush=True)
     return t1statefulall, t1statefulname, t1statefulid
 
 def StatefulCreate(t1statefulall, t1statefulname, url_link_final_2, tenant2key):
     t2statefulid = []
-    print("Transfering All Stateful Configuration...")
+    print("Transfering All Stateful Configuration...", flush=True)
     for count, dirlist in enumerate(t1statefulname):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/statefulconfigurations/search'
@@ -96,9 +96,10 @@ def StatefulCreate(t1statefulall, t1statefulname, url_link_final_2, tenant2key):
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                         t2statefulid.append(str(indexid))
-                        print("#" + str(count) + " Stateful Config ID: " + indexid)
+                        print("#" + str(count) + " Stateful Config ID: " + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
         else:
             payload = t1statefulall[count]
             url = url_link_final_2 + 'api/statefulconfigurations'
@@ -118,9 +119,9 @@ def StatefulCreate(t1statefulall, t1statefulname, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         t2statefulid.append(str(indexid))
-                        print("#" + str(count) + " Stateful Config ID: " + indexid)
+                        print("#" + str(count) + " Stateful Config ID: " + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
     #print(t2statefulid)
-    print("Done!")
+    print("Done!", flush=True)
     return t2statefulid

@@ -11,7 +11,7 @@ def PortListGet(url_link_final, tenant1key):
     t1portlistall = []
     t1portlistname = []
     t1portlistid = []
-    print("Getting All Port List...")
+    print("Getting All Port List...", flush=True)
     payload  = {}
     url = url_link_final + 'api/portlists'
     headers = {
@@ -45,7 +45,7 @@ def PortListGet(url_link_final, tenant1key):
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-1]
                     t1portlistname.append(str(indexid))
-                    print("#" + str(count) + " Port List name: " + indexid)
+                    print("#" + str(count) + " Port List name: " + indexid, flush=True)
                     describe2 = indexpart[endIndex:]
                     index = describe2.find('\"ID\"')
                     if index != -1:
@@ -56,16 +56,16 @@ def PortListGet(url_link_final, tenant1key):
                             if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                                 indexid = indexpart[startIndex+1:endIndex]
                                 t1portlistid.append(str(indexid))
-                                print("#" + str(count) + " Port List ID: " + indexid)
+                                print("#" + str(count) + " Port List ID: " + indexid, flush=True)
                                 describe2 = indexpart[endIndex:]
         count += 1
     #print(t1portlistid)
-    print("Done!")
+    print("Done!", flush=True)
     return t1portlistall, t1portlistname, t1portlistid
 
 def PortListCreate(t1portlistall, t1portlistname, url_link_final_2, tenant2key):
     t2portlistid = []
-    print("Transfering All Port List...")
+    print("Transfering All Port List...", flush=True)
     for count, dirlist in enumerate(t1portlistname):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/portlists/search'
@@ -95,7 +95,7 @@ def PortListCreate(t1portlistall, t1portlistname, url_link_final_2, tenant2key):
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                         t2portlistid.append(str(indexid))
-                        print("#" + str(count) + " Port List ID:" + indexid)     
+                        print("#" + str(count) + " Port List ID:" + indexid, flush=True)     
         else:
             payload = t1portlistall[count]
             url = url_link_final_2 + 'api/portlists'
@@ -115,10 +115,11 @@ def PortListCreate(t1portlistall, t1portlistname, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         t2portlistid.append(str(indexid))
-                        print("#" + str(count) + " Port List ID:" + indexid)
+                        print("#" + str(count) + " Port List ID:" + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
     #print("Finished Transfering All Port List.")
     #print(t2portlistid)
-    print("Done!")
+    print("Done!", flush=True)
     return t2portlistid

@@ -10,7 +10,7 @@ cert = False
 
 def LIGet(allofpolicy):
     liruleid = []
-    print ("Log Inspection rules in Tenant 1")
+    print ("Log Inspection rules in Tenant 1", flush=True)
     for describe in allofpolicy:
         index = describe.find('\"logInspection\"')
         if index != -1:
@@ -31,7 +31,7 @@ def LIGet(allofpolicy):
                                 indexid2 = indexid1.split(",")
                                 liruleid.extend(indexid2)
     liruleid = list(dict.fromkeys(liruleid))
-    print(liruleid) 
+    print(liruleid, flush=True) 
     return liruleid
 
 def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2key):
@@ -40,7 +40,7 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
     allliruleidnew1 = []
     allliruleidold = []
     alllicustomrule = []
-    print("Searching LI rules in Tenant 1...")                  
+    print("Searching LI rules in Tenant 1...", flush=True)                  
     for count, dirlist in enumerate(liruleid):
         payload  = {}
         url = url_link_final + 'api/loginspectionrules/' + str(dirlist)
@@ -61,10 +61,10 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-2]
                     alllirulename.append(str(indexid))
-                    print("#" + str(count) + " LI rule name: " + indexid)
-        print("#" + str(count) + " LI rule ID: " + dirlist)
-    print("Done!")        
-    print("Searching and Modifying LI rule in Tenant 2...")  
+                    print("#" + str(count) + " LI rule name: " + indexid, flush=True)
+        print("#" + str(count) + " LI rule ID: " + dirlist, flush=True)
+    print("Done!", flush=True)        
+    print("Searching and Modifying LI rule in Tenant 2...", flush=True)  
     for count, dirlist in enumerate(alllirulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/loginspectionrules/search'
@@ -87,19 +87,20 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                         indexid = indexpart[startIndex+1:endIndex]
                         allliruleidnew1.append(str(indexid))
                         allliruleidold.append(count)
-                        print("#" + str(count) + " LI rule ID: " + indexid)
+                        print("#" + str(count) + " LI rule ID: " + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
         else:
             alllicustomrule.append(count)
-    print("Tenant 2 default LI rules")
-    print(allliruleidnew1)
+    print("Tenant 2 default LI rules", flush=True)
+    print(allliruleidnew1, flush=True)
     return alllirule, allliruleidnew1, allliruleidold, alllicustomrule
 
 def LICustom(alllirule, alllicustomrule, url_link_final_2, tenant2key):
     allliruleidnew2 = []
     if alllicustomrule:
-        print("Creating new custom LI rule in Tenant 2...")  
+        print("Creating new custom LI rule in Tenant 2...", flush=True)  
         for count, indexnum in enumerate(alllicustomrule):
             payload = alllirule[indexnum]
             url = url_link_final_2 + 'api/loginspectionrules'
@@ -119,11 +120,12 @@ def LICustom(alllirule, alllicustomrule, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allliruleidnew2.append(str(indexid))
-                        print("#" + str(count) + " LI rule ID: " + indexid)
+                        print("#" + str(count) + " LI rule ID: " + indexid, flush=True)
             else:
-                print(describe)
-    print("all new LI rule custom rule")
-    print(allliruleidnew2)
+                print(describe, flush=True)
+                print(payload, flush=True)
+    print("all new LI rule custom rule", flush=True)
+    print(allliruleidnew2, flush=True)
     return allliruleidnew2
 
 def LIReplace(allofpolicy, allliruleidnew1, allliruleidnew2, liruleid, allliruleidold, alllicustomrule):

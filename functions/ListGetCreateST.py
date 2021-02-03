@@ -53,7 +53,7 @@ def ListScheduledTask(url_link_final, tenant1key):
 def GetScheduledTask(stIDs, url_link_final, tenant1key):
     allst = []
     namest = []
-    print ('Getting Target Task...')
+    print ('Getting Target Task...', flush=True)
     for part in stIDs:
         payload = {}
         url = url_link_final + 'api/scheduledtasks/' + str(part)
@@ -75,14 +75,14 @@ def GetScheduledTask(stIDs, url_link_final, tenant1key):
                     indexid = indexpart[startIndex+1:endIndex-1]
                     namest.append(str(indexid))
                     describe = indexpart[endIndex:]
-    print(allst)
-    print(namest)
+    print(allst, flush=True)
+    print(namest, flush=True)
     return allst, namest
 
 def CreateScheduledTask(allst, namest, url_link_final_2, tenant2key):
-    print ('Creating Task to target Account...')
+    print ('Creating Task to target Account...', flush=True)
     for count, dirlist in enumerate(namest):
-        print(dirlist)
+        print(dirlist, flush=True)
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/scheduledtasks/search'
         headers = {
@@ -121,4 +121,4 @@ def CreateScheduledTask(allst, namest, url_link_final_2, tenant2key):
             }
             response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
             
-        print(str(response.text))
+        print(str(response.text), flush=True)

@@ -9,7 +9,7 @@ cert = False
 
 def IMGet(allofpolicy):
     imruleid = []
-    print ("IM rules in Tenant 1")
+    print ("IM rules in Tenant 1", flush=True)
     for describe in allofpolicy:
         index = describe.find('\"integrityMonitoring\"')
         if index != -1:
@@ -30,7 +30,7 @@ def IMGet(allofpolicy):
                                 indexid2 = indexid1.split(",")
                                 imruleid.extend(indexid2)
     imruleid = list(dict.fromkeys(imruleid))
-    print(imruleid)
+    print(imruleid, flush=True)
     return imruleid
 
 def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2key):
@@ -39,7 +39,7 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
     allimruleidnew1 =[]
     allimruleidold = []
     allimcustomrule =[]
-    print("Searching IM rules in Tenant 1...")                    
+    print("Searching IM rules in Tenant 1...", flush=True)                    
     for count, dirlist in enumerate(imruleid):
         payload  = {}
         url = url_link_final + 'api/integritymonitoringrules/' + str(dirlist)
@@ -60,10 +60,10 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-2]
                     allimrulename.append(str(indexid))
-                    print("#" + str(count) + " IPS rule name: " + indexid)
-        print("#" + str(count) + " IM rule ID: " + dirlist)
-    print("Done!")        
-    print("Searching and Modifying IM rule in Tenant 2...")        
+                    print("#" + str(count) + " IPS rule name: " + indexid, flush=True)
+        print("#" + str(count) + " IM rule ID: " + dirlist, flush=True)
+    print("Done!", flush=True)        
+    print("Searching and Modifying IM rule in Tenant 2...", flush=True)        
     for count, dirlist in enumerate(allimrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/integritymonitoringrules/search'
@@ -88,26 +88,27 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
                         indexid = indexpart[startIndex+1:endIndex]
                         allimruleidnew1.append(str(indexid))
                         allimruleidold.append(count)
-                        print("#" + str(count) + " IM rule ID: " + str(indexid))
+                        print("#" + str(count) + " IM rule ID: " + str(indexid), flush=True)
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
                             allimruleidnew1.append(str(indexid))
                             allimruleidold.append(count)
-                            print("#" + str(count) + " IM rule ID: " + indexid)
+                            print("#" + str(count) + " IM rule ID: " + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
         else:
             allimcustomrule.append(count)
-    print("Tenant 2 default IM rules")
-    print(allimruleidnew1)
+    print("Tenant 2 default IM rules", flush=True)
+    print(allimruleidnew1, flush=True)
     return allimrule, allimruleidnew1, allimruleidold, allimcustomrule
 
 def IMCustom(allimrule, allimcustomrule, url_link_final_2, tenant2key):
     allimruleidnew2 = []
     if allimcustomrule:
-        print("Creating new custom IM rule in Tenant 2...") 
+        print("Creating new custom IM rule in Tenant 2...", flush=True) 
         for count, indexnum in enumerate(allimcustomrule):
             payload = allimrule[indexnum]
             url = url_link_final_2 + 'api/integritymonitoringrules'
@@ -127,11 +128,12 @@ def IMCustom(allimrule, allimcustomrule, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allimruleidnew2.append(str(indexid))
-                        print("#" + str(count) + " IM rule ID: " + indexid)
+                        print("#" + str(count) + " IM rule ID: " + indexid, flush=True)
             else:
-                print(describe)
-    print("all new im rule custom rule")
-    print(allimruleidnew2)
+                print(describe, flush=True)
+                print(payload, flush=True)
+    print("all new im rule custom rule", flush=True)
+    print(allimruleidnew2, flush=True)
     return allimruleidnew2
 
 def IMReplace(allofpolicy, allimruleidnew1, allimruleidnew2, imruleid, allimruleidold, allimcustomrule):

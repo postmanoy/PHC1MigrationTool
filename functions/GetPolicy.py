@@ -11,7 +11,7 @@ def GetPolicy(policyIDs, url_link_final, tenant1key):
     antimalwareconfig = []
     allofpolicy = []
     i = 0
-    print ("Getting Policy from Tenant 1")
+    print ("Getting Policy from Tenant 1", flush=True)
     for count, part in enumerate(policyIDs):
         
         payload  = {}
@@ -26,7 +26,7 @@ def GetPolicy(policyIDs, url_link_final, tenant1key):
         describe = str(response.text)
         i = i + 1
         allofpolicy.append(describe)
-        print ("#" + str(count) + " Policy ID: " + str(part))
+        print ("#" + str(count) + " Policy ID: " + str(part), flush=True)
         rtscan = describe.find('realTimeScanConfigurationID')
         if rtscan != -1:
             rtpart = describe[rtscan+28:]

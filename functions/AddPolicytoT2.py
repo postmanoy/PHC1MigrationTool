@@ -8,7 +8,7 @@ import urllib3
 cert = False
 
 def AddPolicy(allofpolicy, url_link_final_2, tenant2key):
-    print ("Creating Policy to Tenant 2 with new ID")  
+    print ("Creating Policy to Tenant 2 with new ID", flush=True)  
     for count, dirlist in enumerate(allofpolicy):
         rename = 1
         namecheck = 1
@@ -31,13 +31,13 @@ def AddPolicy(allofpolicy, url_link_final_2, tenant2key):
                     endIndex = indexpart.find(',', startIndex + 1)
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
-                        print(indexid)
+                        print(indexid, flush=True)
                         namecheck = -1
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
-                            print(indexid)
+                            print(indexid, flush=True)
                             namecheck = -1
             if namecheck != -1:
                 index = describe.find('name already exists')
@@ -63,5 +63,5 @@ def AddPolicy(allofpolicy, url_link_final_2, tenant2key):
                                     dirlist = describe1[:index+6+startIndex+1] + newname + describe1[index+6+startIndex+endIndex-2:]
                                     rename = rename + 1   
                 else:
-                    print(describe)
+                    print(describe, flush=True)
                     namecheck = -1

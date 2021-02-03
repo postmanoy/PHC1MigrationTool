@@ -9,7 +9,7 @@ cert = False
 
 def DirListTenant2(alldirectory, url_link_final_2, tenant2key):
     alldirectorynew = []
-    print("Creating list to tenant 2, if any")
+    print("Creating list to tenant 2, if any", flush=True)
     for count, dirlist in enumerate(alldirectory):
         rename = 1
         namecheck = 1
@@ -56,8 +56,8 @@ def DirListTenant2(alldirectory, url_link_final_2, tenant2key):
                         alldirectorynew.append(str(indexid))
                         namecheck = -1
             
-    print("new directory list")
-    print(alldirectorynew)
+    print("new directory list", flush=True)
+    print(alldirectorynew, flush=True)
     
     return alldirectorynew
 
@@ -108,8 +108,8 @@ def FileExtensionListTenant2(allfileextention, url_link_final_2, tenant2key):
                         indexid = indexpart[startIndex+1:endIndex]
                         allfileextentionnew.append(str(indexid))  
                         namecheck = -1
-    print("new file extention")
-    print(allfileextentionnew)
+    print("new file extention", flush=True)
+    print(allfileextentionnew, flush=True)
     return allfileextentionnew
 
 def FileListTenant2(allfilelist, url_link_final_2, tenant2key):
@@ -159,6 +159,6 @@ def FileListTenant2(allfilelist, url_link_final_2, tenant2key):
                         indexid = indexpart[startIndex+1:endIndex]
                         allfilelistnew.append(str(indexid))
                         namecheck = -1
-    print("new file list")
-    print(allfilelistnew) 
+    print("new file list", flush=True)
+    print(allfilelistnew, flush=True) 
     return allfilelistnew

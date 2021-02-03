@@ -11,7 +11,7 @@ def MacListGet(url_link_final, tenant1key):
     t1maclistall = []
     t1maclistname = []
     t1maclistid = []
-    print("Getting All Mac List...")
+    print("Getting All Mac List...", flush=True)
     payload  = {}
     url = url_link_final + 'api/maclists'
     headers = {
@@ -45,7 +45,7 @@ def MacListGet(url_link_final, tenant1key):
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-1]
                     t1maclistname.append(str(indexid))
-                    print("#" + str(count) + " Mac List name: " + indexid)
+                    print("#" + str(count) + " Mac List name: " + indexid, flush=True)
                     describe2 = indexpart[endIndex:]
                     index = describe2.find('\"ID\"')
                     if index != -1:
@@ -56,16 +56,16 @@ def MacListGet(url_link_final, tenant1key):
                             if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                                 indexid = indexpart[startIndex+1:endIndex]
                                 t1maclistid.append(str(indexid))
-                                print("#" + str(count) + " Mac List ID: " + indexid)
+                                print("#" + str(count) + " Mac List ID: " + indexid, flush=True)
                                 describe2 = indexpart[endIndex:]
         count += 1
     #print(t1maclistid)
-    print("Done!")
+    print("Done!", flush=True)
     return t1maclistall, t1maclistname, t1maclistid
 
 def MacListCreate(t1maclistall, t1maclistname, url_link_final_2, tenant2key):
     t2maclistid = []
-    print("Transfering All Mac List...")
+    print("Transfering All Mac List...", flush=True)
     for count, dirlist in enumerate(t1maclistname):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/maclists/search'
@@ -95,7 +95,7 @@ def MacListCreate(t1maclistall, t1maclistname, url_link_final_2, tenant2key):
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                         t2maclistid.append(str(indexid))
-                        print("#" + str(count) + " MAC List ID: " + indexid)
+                        print("#" + str(count) + " MAC List ID: " + indexid, flush=True)
         else:
             payload = t1maclistall[count]
             url = url_link_final_2 + 'api/maclists'
@@ -115,10 +115,11 @@ def MacListCreate(t1maclistall, t1maclistname, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         t2maclistid.append(str(indexid))
-                        print("#" + str(count) + " MAC List ID: " + indexid)
+                        print("#" + str(count) + " MAC List ID: " + indexid, flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
     #print("Finished Transfering All Mac List.")
     #print(t2maclistid)
-    print("Done!")
+    print("Done!", flush=True)
     return t2maclistid

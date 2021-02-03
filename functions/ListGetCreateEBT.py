@@ -52,7 +52,7 @@ def ListEventTask(url_link_final, tenant1key):
 def GetEventTask(etIDs, url_link_final, tenant1key):
     allet = []
     nameet = []
-    print ('Getting Target Task...')
+    print ('Getting Target Task...', flush=True)
     for part in etIDs:
         payload = {}
         url = url_link_final + 'api/eventbasedtasks/' + str(part)
@@ -75,12 +75,12 @@ def GetEventTask(etIDs, url_link_final, tenant1key):
                     indexid = indexpart[startIndex+1:endIndex-1]
                     nameet.append(str(indexid))
                     describe = indexpart[endIndex:]
-    print(allet)
-    print(nameet)
+    print(allet, flush=True)
+    print(nameet, flush=True)
     return allet, nameet
 
 def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
-    print ('Creating Task to target Account...')
+    print ('Creating Task to target Account...', flush=True)
     for count, dirlist in enumerate(nameet):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/eventbasedtasks/search'
@@ -119,4 +119,4 @@ def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
             }
             response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
             
-        print(str(response.text))
+        print(str(response.text), flush=True)

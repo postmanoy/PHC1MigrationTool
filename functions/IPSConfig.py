@@ -9,7 +9,7 @@ cert = False
 
 def IPSGet(allofpolicy):
     ipsruleid = []
-    print ("IPS rules in Tenant 1")
+    print ("IPS rules in Tenant 1", flush=True)
     for describe in allofpolicy:
         index = describe.find('\"intrusionPrevention\"')
         if index != -1:
@@ -30,7 +30,7 @@ def IPSGet(allofpolicy):
                                 indexid2 = indexid1.split(",")
                                 ipsruleid.extend(indexid2)
     ipsruleid = list(dict.fromkeys(ipsruleid))
-    print(ipsruleid)
+    print(ipsruleid, flush=True)
     return ipsruleid
 
 def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsappidold, allipscustomapp, url_link_final, tenant1key, url_link_final_2, tenant2key):
@@ -39,7 +39,7 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
     allipsruleidnew1 = []
     allipsruleidold = []
     allipscustomrule = []
-    print("Searching IPS rules in Tenant 1...")  
+    print("Searching IPS rules in Tenant 1...", flush=True)  
     for count, dirlist in enumerate(ipsruleid):
         payload  = {}
         url = url_link_final + 'api/intrusionpreventionrules/' + str(dirlist)
@@ -60,7 +60,7 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
                 if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                     indexid = indexpart[startIndex+1:endIndex-2]
                     allipsrulename.append(str(indexid))
-                    print("#" + str(count) + " IPS rule name: " + str(indexid))
+                    print("#" + str(count) + " IPS rule name: " + str(indexid), flush=True)
         index3 = describe.find('applicationTypeID')
         if index3 != -1:
             indexpart = describe[index3+17:]
@@ -79,9 +79,9 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
                     indexid5 = describe[index3:index3+17+endIndex3]
                     listpart = indexid5.replace(indexid1, replaceid)
                     allipsrule[count] = describe.replace(indexid5, listpart)
-        print("#" + str(count) + " IPS rule ID: " + dirlist)
-    print("Done!")
-    print("Searching and Modifying IPS rule in Tenant 2...")    
+        print("#" + str(count) + " IPS rule ID: " + dirlist, flush=True)
+    print("Done!", flush=True)
+    print("Searching and Modifying IPS rule in Tenant 2...", flush=True)    
     for count, dirlist in enumerate(allipsrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
         url = url_link_final_2 + 'api/intrusionpreventionrules/search'
@@ -104,27 +104,28 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
                         indexid = indexpart[startIndex+1:endIndex]
                         allipsruleidnew1.append(str(indexid))
                         allipsruleidold.append(count)
-                        print("#" + str(count) + " IPS rule ID: " + str(indexid))
+                        print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
                             allipsruleidnew1.append(str(indexid))
                             allipsruleidold.append(count)
-                            print("#" + str(count) + " IPS rule ID: " + str(indexid))
+                            print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
             else:
-                print(describe)
+                print(describe, flush=True)
+                print(payload, flush=True)
         else:
             allipscustomrule.append(count)
-    print("Done!")
-    print("Tenant 2 default IPS rules")
-    print(allipsruleidnew1)
+    print("Done!", flush=True)
+    print("Tenant 2 default IPS rules", flush=True)
+    print(allipsruleidnew1, flush=True)
     return allipsrule, allipsruleidnew1, allipsruleidold, allipscustomrule
 
 def IPSCustom(allipsrule, allipscustomrule, url_link_final_2, tenant2key):
     allipsruleidnew2 = []
     if allipscustomrule:
-        print("Creating new custom IPS rule in Tenant 2...")
+        print("Creating new custom IPS rule in Tenant 2...", flush=True)
         for count, indexnum in enumerate(allipscustomrule):
             payload = allipsrule[indexnum]
             url = url_link_final_2 + 'api/intrusionpreventionrules'
@@ -144,18 +145,19 @@ def IPSCustom(allipsrule, allipscustomrule, url_link_final_2, tenant2key):
                     if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                         indexid = indexpart[startIndex+1:endIndex]
                         allipsruleidnew2.append(str(indexid))
-                        print("#" + str(count) + " IPS rule ID: " + str(indexid))
+                        print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
                     else:
                         endIndex = indexpart.find('}', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
                             allipsruleidnew2.append(str(indexid))
-                            print("#" + str(count) + " IPS rule ID: " + str(indexid))
+                            print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
             else:
-                print(describe)
-    print("Done!")
-    print("all new IPS rule custom rule")
-    print(allipsruleidnew2)
+                print(describe, flush=True)
+                print(payload, flush=True)
+    print("Done!", flush=True)
+    print("all new IPS rule custom rule", flush=True)
+    print(allipsruleidnew2, flush=True)
     return allipsruleidnew2
 
 def IPSReplace(allofpolicy, allipsruleidnew1, allipsruleidnew2, ipsruleid, allipsruleidold, allipscustomrule):
