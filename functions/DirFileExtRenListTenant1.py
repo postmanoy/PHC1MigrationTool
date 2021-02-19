@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -67,42 +68,61 @@ def FileListTenant1(filelist, url_link_final, tenant1key):
 
 def RenameLists(alldirectory, allfilelist, allfileextention):
     count = 0
-    for describe in alldirectory:
-        index = describe.find('name')
-        if index != -1:
-            indexpart = describe[index+5:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-1]
-                    newname = indexid + " - Migrated"
-                    alldirectory[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]                  
-        count = count + 1
+    if alldirectory:
+        for describe in alldirectory:
+            descjson = json.loads(describe)
+            descjson['name'] = descjson['name'] + " - Migrated"
+            alldirectory[count] = json.dumps(descjson)
+            '''
+            index = describe.find('name')
+            if index != -1:
+                indexpart = describe[index+5:]
+                startIndex = indexpart.find('\"')
+                if startIndex != -1: #i.e. if the first quote was found
+                    endIndex = indexpart.find(',', startIndex + 1)
+                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                        indexid = indexpart[startIndex+1:endIndex-1]
+                        newname = indexid + " - Migrated"
+                        alldirectory[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]         
+                        '''         
+            count = count + 1
+    
     count = 0
-    for describe in allfilelist:
-        index = describe.find('name')
-        if index != -1:
-            indexpart = describe[index+5:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-1]
-                    newname = indexid + " - Migrated"
-                    allfilelist[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
-        count = count + 1
+    if allfilelist:
+        for describe in allfilelist:
+            descjson = json.loads(describe)
+            descjson['name'] = descjson['name'] + " - Migrated"
+            allfilelist[count] = json.dumps(descjson)
+            '''
+            index = describe.find('name')
+            if index != -1:
+                indexpart = describe[index+5:]
+                startIndex = indexpart.find('\"')
+                if startIndex != -1: #i.e. if the first quote was found
+                    endIndex = indexpart.find(',', startIndex + 1)
+                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                        indexid = indexpart[startIndex+1:endIndex-1]
+                        newname = indexid + " - Migrated"
+                        allfilelist[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
+                        '''
+            count = count + 1
     count = 0
-    for describe in allfileextention:
-        index = describe.find('name')
-        if index != -1:
-            indexpart = describe[index+5:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-1]
-                    newname = indexid + " - Migrated"
-                    allfileextention[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]  
-        count = count + 1
+    if allfileextention:
+        for describe in allfileextention:
+            descjson = json.loads(describe)
+            descjson['name'] = descjson['name'] + " - Migrated"
+            allfileextention[count] = json.dumps(descjson)
+            '''
+            index = describe.find('name')
+            if index != -1:
+                indexpart = describe[index+5:]
+                startIndex = indexpart.find('\"')
+                if startIndex != -1: #i.e. if the first quote was found
+                    endIndex = indexpart.find(',', startIndex + 1)
+                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                        indexid = indexpart[startIndex+1:endIndex-1]
+                        newname = indexid + " - Migrated"
+                        allfileextention[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]  
+                        '''
+            count = count + 1
     return alldirectory, allfilelist, allfileextention

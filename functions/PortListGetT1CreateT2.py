@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -22,6 +23,14 @@ def PortListGet(url_link_final, tenant1key):
     response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
     describe = str(response.text)
     describe2 = str(response.text)
+    namejson = json.loads(describe)
+    for count, here in enumerate(namejson['portLists']):
+        t1portlistall.append(str(json.dumps(here)))
+        t1portlistname.append(str(here['name']))
+        print("#" + str(count) + " Port List name: " + str(here['name']), flush=True)
+        t1portlistid.append(str(here['ID']))
+        print("#" + str(count) + " Port List ID: " + str(here['ID']), flush=True)
+    '''
     index = describe.find('\"portLists\"')
     if index != -1:
         indexpart = describe[index+10:]
@@ -59,6 +68,7 @@ def PortListGet(url_link_final, tenant1key):
                                 print("#" + str(count) + " Port List ID: " + indexid, flush=True)
                                 describe2 = indexpart[endIndex:]
         count += 1
+        '''
     #print(t1portlistid)
     print("Done!", flush=True)
     return t1portlistall, t1portlistname, t1portlistid

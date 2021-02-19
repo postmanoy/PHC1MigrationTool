@@ -4,7 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
-
+import json
 cert = False
 
 def ListAllPolicy(url_link_final, tenant1key):
@@ -20,6 +20,11 @@ def ListAllPolicy(url_link_final, tenant1key):
     index = 0
     oldpolicyname = []
     oldpolicyid = []
+    namejson = json.loads(describe)
+    for here in namejson['policies']:
+        oldpolicyname.append(str(here['name']))
+        oldpolicyid.append(str(here['ID']))
+    '''
     while index != -1:
         index = describe.find('\"name\"')
         if index != -1:
@@ -46,6 +51,6 @@ def ListAllPolicy(url_link_final, tenant1key):
                         indexid = indexpart[startIndex+1:endIndex]
                         oldpolicyid.append(str(indexid))
                         describe = indexpart[endIndex:]
-        
-                    
+                        '''
+
     return enumerate(oldpolicyname), oldpolicyid

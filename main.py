@@ -4,6 +4,7 @@ import datetime
 import time
 import requests
 import urllib3
+import traceback
 from PyQt4 import QtGui, QtCore
 
 #####################IMPORTED FUNCTIONS##########################
@@ -599,6 +600,8 @@ class ThreadingClass(QtCore.QThread):
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				var = traceback.format_exc()
+				print(var)
 				print(e)
 				sys.stdout.close()
 				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")
@@ -657,6 +660,8 @@ class ThreadingClass(QtCore.QThread):
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				var = traceback.format_exc()
+				print(var)
 				print(e)
 				sys.stdout.close()
 				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")
@@ -716,6 +721,8 @@ class ThreadingClass(QtCore.QThread):
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				var = traceback.format_exc()
+				print(var)
 				print(e)
 				sys.stdout.close()
 				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")

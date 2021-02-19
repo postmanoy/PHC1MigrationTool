@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -101,7 +102,13 @@ def AmConfigCheck(allamconfig, directorylist, alldirectorynew, fileextentionlist
 
 def RenameAmConfig(allamconfig):
     count = 0
-    for describe in allamconfig:         
+    if allamconfig:
+        for describe in allamconfig:
+            amjson = json.loads(describe)
+            amjson['name'] = amjson['name'] + " - Migrated"
+            allamconfig[count] = json.dumps(amjson)
+            count = count + 1
+        '''    
         index = describe.find('name')
         if index != -1:
             indexpart = describe[index+5:]
@@ -112,5 +119,5 @@ def RenameAmConfig(allamconfig):
                     indexid = indexpart[startIndex+1:endIndex-1]
                     newname = indexid + " - Migrated"
                     allamconfig[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
-        count = count + 1
+                    '''
     return allamconfig

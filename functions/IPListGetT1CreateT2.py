@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -22,6 +23,14 @@ def IpListGet(url_link_final, tenant1key):
     response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
     describe = str(response.text)
     describe2 = str(response.text)
+    namejson = json.loads(describe)
+    for count, here in enumerate(namejson['ipLists']):
+        t1iplistall.append(str(json.dumps(here)))
+        t1iplistname.append(str(here['name']))
+        print("#" + str(count) + " IP List name: " + str(here['name']), flush=True)
+        t1iplistid.append(str(here['ID']))
+        print("#" + str(count) + " IP List ID: " + str(here['ID']), flush=True)
+    '''
     index = describe.find('\"ipLists\"')
     if index != -1:
         indexpart = describe[index+11:]
@@ -59,7 +68,9 @@ def IpListGet(url_link_final, tenant1key):
                                 t1iplistid.append(str(indexid))
                                 print("#" + str(count) + " IP List ID: " + indexid, flush=True)
                                 describe2 = indexpart[endIndex:]
+                                
         count += 1
+        '''
     #print("All IP List ID...")
     #print(t1iplistid)
     print("Done!", flush=True)

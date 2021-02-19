@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -11,6 +12,11 @@ def IPSGet(allofpolicy):
     ipsruleid = []
     print ("IPS rules in Tenant 1", flush=True)
     for describe in allofpolicy:
+        namejson = json.loads(describe)
+        if 'ruleIDs' in namejson['intrusionPrevention']: 
+            for count, here2 in enumerate(namejson['intrusionPrevention']['ruleIDs']):
+                ipsruleid.append(str(here2))
+        '''
         index = describe.find('\"intrusionPrevention\"')
         if index != -1:
             indexpart = describe[index+20:]
@@ -27,8 +33,9 @@ def IPSGet(allofpolicy):
                             endIndex = indexpart.find(']', startIndex + 1)
                             if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                                 indexid1 = indexpart[startIndex+1:endIndex]
-                                indexid2 = indexid1.split(",")
+                                indexid2 = indexid1.split(", ")
                                 ipsruleid.extend(indexid2)
+                                '''
     ipsruleid = list(dict.fromkeys(ipsruleid))
     print(ipsruleid, flush=True)
     return ipsruleid
@@ -40,46 +47,53 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
     allipsruleidold = []
     allipscustomrule = []
     print("Searching IPS rules in Tenant 1...", flush=True)  
-    for count, dirlist in enumerate(ipsruleid):
-        payload  = {}
-        url = url_link_final + 'api/intrusionpreventionrules/' + str(dirlist)
-        headers = {
-            "api-secret-key": tenant1key,
-            "api-version": "v1",
-            "Content-Type": "application/json",
-        }
-        response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
-        describe = str(response.text)
-        allipsrule.append(describe)
-        index = describe.find('name')
-        if index != -1:
-            indexpart = describe[index+5:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find('\"description\"', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-2]
-                    allipsrulename.append(str(indexid))
-                    print("#" + str(count) + " IPS rule name: " + str(indexid), flush=True)
-        index3 = describe.find('applicationTypeID')
-        if index3 != -1:
-            indexpart = describe[index3+17:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    checkindex = ipsappid.index(indexid1)
-                    if checkindex in allipsappidold:
-                        checkindex1 = allipsappidold.index(checkindex)
-                        replaceid = allipsappidnew1[checkindex1]
-                    elif checkindex in allipscustomapp:
-                        checkindex1 = allipscustomapp.index(checkindex)
-                        replaceid = allipsappidnew2[checkindex1]
-                    indexid5 = describe[index3:index3+17+endIndex3]
-                    listpart = indexid5.replace(indexid1, replaceid)
-                    allipsrule[count] = describe.replace(indexid5, listpart)
-        print("#" + str(count) + " IPS rule ID: " + dirlist, flush=True)
+    if ipsruleid:
+        for count, dirlist in enumerate(ipsruleid):
+            payload  = {}
+            url = url_link_final + 'api/intrusionpreventionrules/' + str(dirlist)
+            headers = {
+                "api-secret-key": tenant1key,
+                "api-version": "v1",
+                "Content-Type": "application/json",
+            }
+            response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
+            describe = str(response.text)
+            allipsrule.append(describe)
+            ipsjson = json.loads(describe)
+            allipsrulename.append(str(ipsjson['name']))
+            print("#" + str(count) + " IPS rule name: " + str(ipsjson['name']), flush=True)
+            '''
+            index = describe.find('name')
+            if index != -1:
+                indexpart = describe[index+5:]
+                startIndex = indexpart.find('\"')
+                if startIndex != -1: #i.e. if the first quote was found
+                    endIndex = indexpart.find('\"description\"', startIndex + 1)
+                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                        indexid = indexpart[startIndex+1:endIndex-2]
+                        allipsrulename.append(str(indexid))
+                        print("#" + str(count) + " IPS rule name: " + str(indexid), flush=True)
+                        '''
+            
+            index3 = describe.find('applicationTypeID')
+            if index3 != -1:
+                indexpart = describe[index3+17:]
+                startIndex = indexpart.find(':')
+                if startIndex != -1: #i.e. if the first quote was found
+                    endIndex3 = indexpart.find(',', startIndex + 1)
+                    if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
+                        indexid1 = indexpart[startIndex+1:endIndex3]
+                        checkindex = ipsappid.index(indexid1)
+                        if checkindex in allipsappidold:
+                            checkindex1 = allipsappidold.index(checkindex)
+                            replaceid = allipsappidnew1[checkindex1]
+                        elif checkindex in allipscustomapp:
+                            checkindex1 = allipscustomapp.index(checkindex)
+                            replaceid = allipsappidnew2[checkindex1]
+                        indexid5 = describe[index3:index3+17+endIndex3]
+                        listpart = indexid5.replace(indexid1, replaceid)
+                        allipsrule[count] = describe.replace(indexid5, listpart)
+            print("#" + str(count) + " IPS rule ID: " + dirlist, flush=True)
     print("Done!", flush=True)
     print("Searching and Modifying IPS rule in Tenant 2...", flush=True)    
     for count, dirlist in enumerate(allipsrulename):
@@ -92,34 +106,39 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
         }
         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
         describe = str(response.text)
-        index = describe.find(dirlist)
-        if index != -1:
-            index = describe.find("\"ID\"")
+        taskjson = json.loads(describe)
+        if not 'message' in taskjson:
+            index = describe.find(dirlist)
             if index != -1:
-                indexpart = describe[index+4:]
-                startIndex = indexpart.find(':')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex]
-                        allipsruleidnew1.append(str(indexid))
-                        allipsruleidold.append(count)
-                        print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
-                    else:
-                        endIndex = indexpart.find('}', startIndex + 1)
+                index = describe.find("\"ID\"")
+                if index != -1:
+                    indexpart = describe[index+4:]
+                    startIndex = indexpart.find(':')
+                    if startIndex != -1: #i.e. if the first quote was found
+                        endIndex = indexpart.find(',', startIndex + 1)
                         if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
                             indexid = indexpart[startIndex+1:endIndex]
                             allipsruleidnew1.append(str(indexid))
                             allipsruleidold.append(count)
                             print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
+                        else:
+                            endIndex = indexpart.find('}', startIndex + 1)
+                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
+                                indexid = indexpart[startIndex+1:endIndex]
+                                allipsruleidnew1.append(str(indexid))
+                                allipsruleidold.append(count)
+                                print("#" + str(count) + " IPS rule ID: " + str(indexid), flush=True)
+                else:
+                    print(describe, flush=True)
+                    print(payload, flush=True)
             else:
-                print(describe, flush=True)
-                print(payload, flush=True)
+                allipscustomrule.append(count)
         else:
-            allipscustomrule.append(count)
+            print(describe, flush=True)
+            print(payload, flush=True)
     print("Done!", flush=True)
-    print("Tenant 2 default IPS rules", flush=True)
-    print(allipsruleidnew1, flush=True)
+    #print("Tenant 2 default IPS rules", flush=True)
+    #print(allipsruleidnew1, flush=True)
     return allipsrule, allipsruleidnew1, allipsruleidold, allipscustomrule
 
 def IPSCustom(allipsrule, allipscustomrule, url_link_final_2, tenant2key):
@@ -155,9 +174,9 @@ def IPSCustom(allipsrule, allipscustomrule, url_link_final_2, tenant2key):
             else:
                 print(describe, flush=True)
                 print(payload, flush=True)
-    print("Done!", flush=True)
-    print("all new IPS rule custom rule", flush=True)
-    print(allipsruleidnew2, flush=True)
+        print("Done!", flush=True)
+    #print("all new IPS rule custom rule", flush=True)
+    #print(allipsruleidnew2, flush=True)
     return allipsruleidnew2
 
 def IPSReplace(allofpolicy, allipsruleidnew1, allipsruleidnew2, ipsruleid, allipsruleidold, allipscustomrule):
@@ -179,7 +198,7 @@ def IPSReplace(allofpolicy, allipsruleidnew1, allipsruleidnew2, ipsruleid, allip
                             if startIndex2 != -1 and endIndex2 != -1: #i.e. both quotes were found
                                 indexid2 = indexpart2[startIndex2+1:endIndex2]
                                 indexid3 = indexpart2[startIndex2+1:endIndex2]
-                                indexid4 = indexid2.split(",")
+                                indexid4 = indexid2.split(", ")
                                 if allipsruleidnew1 or allipsruleidnew2:
                                     for count1, this in enumerate(indexid4):
                                         checkindex = ipsruleid.index(this)

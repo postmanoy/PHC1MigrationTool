@@ -4,6 +4,7 @@ import time
 from time import sleep
 import requests
 import urllib3
+import json
 
 cert = False
 
@@ -22,6 +23,15 @@ def MacListGet(url_link_final, tenant1key):
     response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
     describe = str(response.text)
     describe2 = str(response.text)
+    namejson = json.loads(describe)
+    for count, here in enumerate(namejson['macLists']):
+        t1maclistall.append(str(json.dumps(here)))
+        t1maclistname.append(str(here['name']))
+        print("#" + str(count) + " Mac List name: " + str(here['name']), flush=True)
+        t1maclistid.append(str(here['ID']))
+        print("#" + str(count) + " Mac List ID: " + str(here['ID']), flush=True)
+
+    '''
     index = describe.find('\"macLists\"')
     if index != -1:
         indexpart = describe[index+10:]
@@ -59,6 +69,7 @@ def MacListGet(url_link_final, tenant1key):
                                 print("#" + str(count) + " Mac List ID: " + indexid, flush=True)
                                 describe2 = indexpart[endIndex:]
         count += 1
+        '''
     #print(t1maclistid)
     print("Done!", flush=True)
     return t1maclistall, t1maclistname, t1maclistid
