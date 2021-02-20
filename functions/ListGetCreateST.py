@@ -108,33 +108,37 @@ def CreateScheduledTask(allst, namest, url_link_final_2, tenant2key):
             index = describe.find(dirlist)
             taskjson = json.loads(describe)
             if not 'message' in taskjson:
-                indexid = taskjson['ID']
-                payload = allst[count]
-                url = url_link_final_2 + 'api/scheduledtasks/' + str(indexid)
-                headers = {
-                "api-secret-key": tenant2key,
-                "api-version": "v1",
-                "Content-Type": "application/json",
-                }
-                response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
-                describe = str(response.text)
-                taskjson = json.loads(describe)
-                print("#" + str(count) + " Schedule Task name: " + taskjson['name'], flush=True)
-                print("#" + str(count) + " Schedule ID: " + str(taskjson['ID']), flush=True)
+                if taskjson['scheduledTasks']:
+                    for here in taskjson['scheduledTasks']:
+                        indexid = here['ID']
+                        payload = allst[count]
+                        url = url_link_final_2 + 'api/scheduledtasks/' + str(indexid)
+                        headers = {
+                        "api-secret-key": tenant2key,
+                        "api-version": "v1",
+                        "Content-Type": "application/json",
+                        }
+                        response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                        describe = str(response.text)
+                        taskjson2 = json.loads(describe)
+                        print("#" + str(count) + " Schedule Task name: " + taskjson2['name'], flush=True)
+                        print("#" + str(count) + " Schedule ID: " + str(taskjson2['ID']), flush=True)
+                else:
+                    payload = allst[count]
+                    url = url_link_final_2 + 'api/scheduledtasks'
+                    headers = {
+                    "api-secret-key": tenant2key,
+                    "api-version": "v1",
+                    "Content-Type": "application/json",
+                    }
+                    response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                    describe = str(response.text)
+                    taskjson2 = json.loads(describe)
+                    print("#" + str(count) + " Schedule Task name: " + taskjson2['name'], flush=True)
+                    print("#" + str(count) + " Schedule ID: " + str(taskjson2['ID']), flush=True)
             else:
-                payload = allst[count]
-                url = url_link_final_2 + 'api/scheduledtasks'
-                headers = {
-                "api-secret-key": tenant2key,
-                "api-version": "v1",
-                "Content-Type": "application/json",
-                }
-                response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
-                describe = str(response.text)
-                taskjson = json.loads(describe)
-                print("#" + str(count) + " Schedule Task name: " + taskjson['name'], flush=True)
-                print("#" + str(count) + " Schedule ID: " + str(taskjson['ID']), flush=True)
-
+                print(describe, flush=True)
+                print(payload, flush=True)
                     
             '''
             if index != -1:

@@ -88,10 +88,25 @@ def StatefulCreate(t1statefulall, t1statefulname, url_link_final_2, tenant2key):
             describe = str(response.text)
             taskjson = json.loads(describe)
             if not 'message' in taskjson:
-                for here in taskjson['statefulConfigurations']:
-                    indexid = here['ID']
+                if taskjson['statefulConfigurations']:
+                    for here in taskjson['statefulConfigurations']:
+                        indexid = here['ID']
+                        payload = t1statefulall[count]
+                        url = url_link_final_2 + 'api/statefulconfigurations/' + str(indexid)
+                        headers = {
+                        "api-secret-key": tenant2key,
+                        "api-version": "v1",
+                        "Content-Type": "application/json",
+                        }
+                        response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                        describe = str(response.text)
+                        taskjson1 = json.loads(describe)
+                        t2statefulid.append(str(taskjson1['ID']))
+                        print("#" + str(count) + " Stateful Config name: " + taskjson1['name'], flush=True)
+                        print("#" + str(count) + " Stateful Config ID: " + str(taskjson1['ID']), flush=True)
+                else:
                     payload = t1statefulall[count]
-                    url = url_link_final_2 + 'api/statefulconfigurations/' + str(indexid)
+                    url = url_link_final_2 + 'api/statefulconfigurations'
                     headers = {
                     "api-secret-key": tenant2key,
                     "api-version": "v1",
@@ -99,24 +114,13 @@ def StatefulCreate(t1statefulall, t1statefulname, url_link_final_2, tenant2key):
                     }
                     response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                     describe = str(response.text)
-                    taskjson1 = json.loads(describe)
-                    t2statefulid.append(str(taskjson1['ID']))
-                    print("#" + str(count) + " Stateful Config name: " + taskjson1['name'], flush=True)
-                    print("#" + str(count) + " Stateful Config ID: " + str(taskjson1['ID']), flush=True)
+                    taskjson = json.loads(describe)
+                    t2statefulid.append(str(taskjson['ID']))
+                    print("#" + str(count) + " Stateful Config name: " + taskjson['name'], flush=True)
+                    print("#" + str(count) + " Stateful Config ID: " + str(taskjson['ID']), flush=True)
             else:
-                payload = t1statefulall[count]
-                url = url_link_final_2 + 'api/statefulconfigurations'
-                headers = {
-                "api-secret-key": tenant2key,
-                "api-version": "v1",
-                "Content-Type": "application/json",
-                }
-                response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
-                describe = str(response.text)
-                taskjson = json.loads(describe)
-                t2statefulid.append(str(taskjson['ID']))
-                print("#" + str(count) + " Stateful Config name: " + taskjson['name'], flush=True)
-                print("#" + str(count) + " Stateful Config ID: " + str(taskjson['ID']), flush=True)
+                print(describe, flush=True)
+                print(payload, flush=True)
             '''
             index = describe.find(dirlist)
             if index != -1:
