@@ -61,7 +61,7 @@ class Window1(QtGui.QMainWindow):
 		self.src_url_lbl1.adjustSize()
 		self.src_url_lbl1.move(50,80)
 		self.src_url_txt1 = QtGui.QLineEdit(self)
-		self.src_url_txt1.setPlaceholderText("https://cloudone.trendmicro.com/")
+		self.src_url_txt1.setPlaceholderText("Example -> https://cloudone.trendmicro.com/")
 		self.src_url_txt1.resize(500,20)
 		self.src_url_txt1.move(50,100)
 
@@ -77,7 +77,7 @@ class Window1(QtGui.QMainWindow):
 		self.dst_url_lbl3.adjustSize()
 		self.dst_url_lbl3.move(50,160)
 		self.dst_url_txt3 = QtGui.QLineEdit(self)
-		self.dst_url_txt3.setPlaceholderText("https://cloudone.trendmicro.com/")
+		self.dst_url_txt3.setPlaceholderText("Example -> https://cloudone.trendmicro.com/")
 		self.dst_url_txt3.resize(500,20)
 		self.dst_url_txt3.move(50,180)
 
@@ -105,15 +105,25 @@ class Window1(QtGui.QMainWindow):
 		self.btn.move(250,290)
 
 	def passingInformation(self):
+		self.radioval = ""
 		self.list_radio = [self.r1, self.r2, self.r3]
 		for i in self.list_radio:
 			if i.isChecked():
 				self.radioval = i.text()
 
-		self.secondWindow = Window2(self.radioval, self.src_url_txt1.text(), self.src_key_txt2.text(), self.dst_url_txt3.text(), self.dst_key_txt4.text())
-	
-		self.close()
-		self.secondWindow.displayWindow()
+		if ( (self.src_url_txt1.text() != "") and (self.src_key_txt2.text() != "") and (self.dst_url_txt3.text() != "") and (self.dst_key_txt4.text() != "") and (self.radioval != "") ):
+			
+			self.secondWindow = Window2(self.radioval, self.src_url_txt1.text(), self.src_key_txt2.text(), self.dst_url_txt3.text(), self.dst_key_txt4.text())
+			self.close()
+			self.secondWindow.displayWindow()
+
+		else:
+			popup = QtGui.QMessageBox(QtGui.QMessageBox.Warning,
+				"Warning",
+				"All fields and options are required to have input!",
+				QtGui.QMessageBox.Ok,
+				self)
+			popup.show()
 
 	def displayWindow(self):
 		self.show()
@@ -287,7 +297,13 @@ class Window3(QtGui.QMainWindow):
 	def updateProgressBarText(self, val):
 		self.title.setText(val)
 		if "An error has occurred." in val:
-			self.btn2.show()
+			popup2 = QtGui.QMessageBox(QtGui.QMessageBox.Critical,
+				"Error",
+				val,
+				QtGui.QMessageBox.Close,
+				self)
+			popup2.show()
+			popup2.buttonClicked.connect(QtCore.QCoreApplication.instance().quit)
 
 	def displayWindow(self):
 		self.show()
