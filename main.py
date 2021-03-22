@@ -19,6 +19,8 @@ from functions.RenamePolicy import RenamePolicy
 from functions.IPListGetT1CreateT2 import IpListGet, IpListCreate
 from functions.MACListGetT1CreateT2 import MacListGet, MacListCreate
 from functions.PortListGetT1CreateT2 import PortListGet, PortListCreate
+from functions.ContextGetT1CreateT2 import ContextGet, ContextCreate
+from functions.ScheduleGetT1CreateT2 import ScheduleGet, ScheduleCreate
 from functions.StatefulGetT1CreateT2 import StatefulGet, StatefulCreate
 from functions.FirewallConfig import FirewallGet, FirewallDescribe, FirewallCustom, FirewallReplace
 from functions.IPSapptypeConfig import IPSappGet, IPSappDescribe, IPSappCustom, IPSappReplace
@@ -423,7 +425,7 @@ class ThreadingClass(QtCore.QThread):
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Renaming Policy...")
 				sys.stdout.flush()
-
+				
 				#Rename Policy
 				allofpolicy = RenamePolicy(allofpolicy)
 				completed+=2.5
@@ -465,30 +467,29 @@ class ThreadingClass(QtCore.QThread):
 				t2portlistid = PortListCreate(t1portlistall, t1portlistname, self.dst_url, self.t2_key)
 				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Stateful Configuration/s in Source Tenant...")
+				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Context, Schedule and Stateful Configuration/s in Source Tenant...")
 				sys.stdout.flush()
 
 				#Other transfer
+				t1contextall, t1contextname, t1contextid = ContextGet(self.src_url, self.t1_key)
+				t2contextid = ContextCreate(t1contextall, t1contextname, self.dst_url, self.t2_key)
+				t1scheduleall, t1schedulename, t1scheduleid = ScheduleGet(self.src_url, self.t1_key)
+				completed+=2.5
+				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
+				self.emit(QtCore.SIGNAL('TEXT'), "Creating Context, Schedule and Stateful Configuration/s in Destination Tenant...")
+				sys.stdout.flush()
+				t2scheduleid = ScheduleCreate(t1scheduleall, t1schedulename, self.dst_url, self.t2_key)
 				t1statefulall, t1statefulname, t1statefulid = StatefulGet(self.src_url, self.t1_key)
-				completed+=2.5
-				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "Creating Stateful Configuration/s in Destination Tenant...")
-				sys.stdout.flush()
-
 				t2statefulid = StatefulCreate(t1statefulall, t1statefulname, self.dst_url, self.t2_key)
-				completed+=2.5
-				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Firewall Configuration/s in Source Tenant...")
-				sys.stdout.flush()
 
 				#all about Firewall rules
 				firewallruleid, policystateful = FirewallGet(allofpolicy)
 				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "Describing Firewall Configuration/s in both Tenants...")
+				self.emit(QtCore.SIGNAL('TEXT'), "Fetching and Describing Firewall Configuration/s in both Tenants...")
 				sys.stdout.flush()
 
-				allfirewallrule, allfirewallruleidnew1, allfirewallruleidold, allfirewallcustomrule = FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2maclistid, t1portlistid, t2portlistid, self.src_url, self.t1_key, self.dst_url, self.t2_key)
+				allfirewallrule, allfirewallruleidnew1, allfirewallruleidold, allfirewallcustomrule = FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2maclistid, t1portlistid, t2portlistid, t1scheduleid, t2scheduleid, t1contextid, t2contextid, self.src_url, self.t1_key, self.dst_url, self.t2_key)
 				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Creating Custom Firewall Rules (if any) in Destination Tenant...")
@@ -545,7 +546,7 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.flush()
 
 				#describe IPS rule
-				allipsrule, allipsruleidnew1, allipsruleidold, allipscustomrule = IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsappidold, allipscustomapp, self.src_url, self.t1_key, self.dst_url, self.t2_key)
+				allipsrule, allipsruleidnew1, allipsruleidold, allipscustomrule = IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsappidold, allipscustomapp, t1scheduleid, t2scheduleid, t1contextid, t2contextid, self.src_url, self.t1_key, self.dst_url, self.t2_key)
 				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Creating Custom IPS rules (if any) in Destination Tenant...")
@@ -592,7 +593,7 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.flush()
 				#describe IM rule
 				allimrule, allimruleidnew1, allimruleidold, allimcustomrule = IMDescribe(imruleid, self.src_url, self.t1_key, self.dst_url, self.t2_key)
-				completed+=5
+				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Finishing Migration...")
 				sys.stdout.flush()
@@ -608,7 +609,8 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.flush()
 				#create Policy to tenant 2
 				AddPolicy(allofpolicy, self.dst_url, self.t2_key)
-				completed+=5
+				completed+=10
+
 				sys.stdout.close()
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Migration done!")

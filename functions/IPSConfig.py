@@ -40,7 +40,7 @@ def IPSGet(allofpolicy):
     print(ipsruleid, flush=True)
     return ipsruleid
 
-def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsappidold, allipscustomapp, url_link_final, tenant1key, url_link_final_2, tenant2key):
+def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsappidold, allipscustomapp, t1scheduleid, t2scheduleid, t1contextid, t2contexteid, url_link_final, tenant1key, url_link_final_2, tenant2key):
     allipsrule = []
     allipsrulename = []
     allipsruleidnew1 = []
@@ -74,7 +74,7 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
                         allipsrulename.append(str(indexid))
                         print("#" + str(count) + " IPS rule name: " + str(indexid), flush=True)
                         '''
-            
+
             index3 = describe.find('applicationTypeID')
             if index3 != -1:
                 indexpart = describe[index3+17:]
@@ -93,6 +93,14 @@ def IPSDescribe(ipsruleid, ipsappid, allipsappidnew1, allipsappidnew2, allipsapp
                         indexid5 = describe[index3:index3+17+endIndex3]
                         listpart = indexid5.replace(indexid1, replaceid)
                         allipsrule[count] = describe.replace(indexid5, listpart)
+            ipsjson = json.loads(allipsrule[count]) 
+            if 'scheduleID' in ipsjson:
+                indexnum = t1scheduleid.index(str(ipsjson['scheduleID']))
+                ipsjson['scheduleID'] = t2scheduleid[indexnum]
+            if 'contextID' in ipsjson:
+                indexnum = t1contextid.index(str(ipsjson['contextID']))
+                ipsjson['contextID'] = t2contexteid[indexnum]
+            allipsrule[count] = json.dumps(ipsjson)
             print("#" + str(count) + " IPS rule ID: " + dirlist, flush=True)
     print("Done!", flush=True)
     print("Searching and Modifying IPS rule in Tenant 2...", flush=True)    

@@ -53,7 +53,7 @@ def FirewallGet(allofpolicy):
     print(firewallruleid, flush=True)
     return firewallruleid, policystateful
 
-def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2maclistid, t1portlistid, t2portlistid, url_link_final, tenant1key, url_link_final_2, tenant2key):
+def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2maclistid, t1portlistid, t2portlistid, t1scheduleid, t2scheduleid, t1contextid, t2contexteid, url_link_final, tenant1key, url_link_final_2, tenant2key):
     allfirewallrule = []
     allfirewallrulename = []
     allfirewallruleidnew1 = []
@@ -89,9 +89,42 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                         print("#" + str(count) + " Firewall rule name: " + str(indexid), flush=True)
                         '''
             print("#" + str(count) + " Firewall rule ID: " + dirlist, flush=True)
+
+        
     print("Done!", flush=True)
     print("Replacing firewall rule IDs configuration in tenant 2...", flush=True)
+
     for count, describe in enumerate(allfirewallrule):
+        firewalljson = json.loads(describe)
+        if 'scheduleID' in firewalljson:
+            indexnum = t1scheduleid.index(str(firewalljson['scheduleID']))
+            firewalljson['scheduleID'] = t2scheduleid[indexnum]
+        if 'contextID' in firewalljson:
+            indexnum = t1contextid.index(str(firewalljson['contextID']))
+            firewalljson['contextID'] = t2contexteid[indexnum]
+        if 'sourceIPListID' in firewalljson:
+            indexnum = t1iplistid.index(str(firewalljson['sourceIPListID']))
+            firewalljson['sourceIPListID'] = t2iplistid[indexnum]
+        if 'sourceMACListID' in firewalljson:
+            indexnum = t1maclistid.index(str(firewalljson['sourceMACListID']))
+            firewalljson['sourceMACListID'] = t2maclistid[indexnum]
+        if 'sourcePortListID' in firewalljson:
+            indexnum = t1portlistid.index(str(firewalljson['sourcePortListID']))
+            firewalljson['sourcePortListID'] = t2portlistid[indexnum]
+        
+        if 'destinationIPListID' in firewalljson:
+            indexnum = t1iplistid.index(str(firewalljson['destinationIPListID']))
+            firewalljson['destinationIPListID'] = t2iplistid[indexnum]
+        if 'destinationMACListID' in firewalljson:
+            indexnum = t1maclistid.index(str(firewalljson['destinationMACListID']))
+            firewalljson['destinationMACListID'] = t2maclistid[indexnum]
+        if 'destinationPortListID' in firewalljson:
+            indexnum = t1portlistid.index(str(firewalljson['destinationPortListID']))
+            firewalljson['destinationPortListID'] = t2portlistid[indexnum]
+            
+        describe = json.dumps(firewalljson)
+
+        """
         index3 = describe.find('sourceIPListID')
         if index3 != -1:
             indexpart = describe[index3+14:]
@@ -164,6 +197,7 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
                     indexnum = t1portlistid.index(indexid1)
                     listpart = indexid5.replace(indexid1, t2portlistid[indexnum])
                     describe = describe.replace(indexid5, listpart)
+        """
         allfirewallrule[count] = describe
     for count, dirlist in enumerate(allfirewallrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
