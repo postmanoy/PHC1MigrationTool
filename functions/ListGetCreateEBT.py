@@ -109,7 +109,7 @@ def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
                 if taskjson['eventBasedTasks']:
                     for here in taskjson['eventBasedTasks']:
                         indexid = here['ID']
-                        payload = allst[count]
+                        payload = allet[count]
                         url = url_link_final_2 + 'api/eventbasedtasks/' + str(indexid)
                         headers = {
                         "api-secret-key": tenant2key,
@@ -122,7 +122,7 @@ def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
                         print("#" + str(count) + " Event Based Task name: " + taskjson['name'], flush=True)
                         print("#" + str(count) + " Event Based ID: " + str(taskjson['ID']), flush=True)
                 else:
-                    payload = allst[count]
+                    payload = allet[count]
                     url = url_link_final_2 + 'api/eventbasedtasks'
                     headers = {
                     "api-secret-key": tenant2key,
