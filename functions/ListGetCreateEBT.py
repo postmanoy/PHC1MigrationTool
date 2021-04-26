@@ -54,14 +54,14 @@ def ListEventTask(url_link_final, tenant1key):
                         describe = indexpart[endIndex:]
                         '''
                     
-    return enumerate(oldetname), oldetid
+    return oldetname, oldetid
 
-def GetEventTask(etIDs, url_link_final, tenant1key):
+def GetEventTask(etIDs, oldpolicyname, oldpolicyid, oldcompgroupname, oldcompgroupid, url_link_final, tenant1key, url_link_final_2, tenant2key):
     allet = []
     nameet = []
     print ('Getting Target Task...', flush=True)
     if etIDs:
-        for part in etIDs:
+        for count, part in enumerate(etIDs):
             payload = {}
             url = url_link_final + 'api/eventbasedtasks/' + str(part)
             headers = {
@@ -70,11 +70,58 @@ def GetEventTask(etIDs, url_link_final, tenant1key):
             "Content-Type": "application/json",
             }
             response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
-
             describe = str(response.text)
-            allet.append(describe)
-            namejson = json.loads(describe)
-            nameet.append(str(namejson['name']))
+            taskjson = json.loads(describe)
+            for count, atype in enumerate(taskjson['actions']):
+                typekey = atype['type']
+                if typekey == 'assign-policy':
+                    if 'parameterValue' in atype:
+                        param = atype['parameterValue']
+                        indexnum = oldpolicyid.index(str(param))
+                        polname = str(oldpolicyname[indexnum])
+                        payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + polname + "\"}]}"
+                        url = url_link_final_2  + 'api/policies/search'
+                        headers = {
+                        "api-secret-key": tenant2key,
+                        "api-version": "v1",
+                        "Content-Type": "application/json",
+                        }
+                        response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                        policyjson1 = json.loads(str(response.text))
+                        if policyjson1['policies']:
+                            idjson = policyjson1['policies']
+                            taskjson['actions'][count]['parameterValue'] = str(idjson[0]['ID'])
+                        else:
+                            print("Policy did not found. Will skip this Event based Task.")
+                if typekey == 'assign-relay':
+                    if 'parameterValue' in atype:
+                        del taskjson['actions'][count]['parameterValue']
+                if typekey == 'assign-group':
+                    if 'parameterValue' in atype:
+                        del taskjson['actions'][count]['parameterValue']
+
+                        param = atype['parameterValue']
+                        indexnum = oldcompgroupid.index(str(param))
+                        polname = str(oldcompgroupname[indexnum])
+                        payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + polname + "\"}]}"
+                        url = url_link_final_2  + 'api/computergroups/search'
+                        headers = {
+                        "api-secret-key": tenant2key,
+                        "api-version": "v1",
+                        "Content-Type": "application/json",
+                        }
+                        response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
+                        policyjson1 = json.loads(str(response.text))
+                        if policyjson1['computerGroups']:
+                            idjson = policyjson1['computerGroups']
+                            taskjson['actions'][count]['parameterValue'] = str(idjson[0]['ID'])
+                        else:
+                            print("Computer Group did not found. Will skip this Event based Task.")
+
+            describe1 = json.dumps(taskjson)
+            allet.append(str(describe1))
+            nameet.append(str(taskjson['name']))
+            print("#" + str(count) + " Event Based Task name: " + str(taskjson['name']), flush=True)
             '''
             index = describe.find('\"name\"')
             if index != -1:
@@ -87,8 +134,8 @@ def GetEventTask(etIDs, url_link_final, tenant1key):
                         nameet.append(str(indexid))
                         describe = indexpart[endIndex:]
                         '''
-    print(allet, flush=True)
-    print(nameet, flush=True)
+    #print(allet, flush=True)
+    #print(nameet, flush=True)
     return allet, nameet
 
 def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
@@ -118,9 +165,9 @@ def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
                         }
                         response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                         describe = str(response.text)
-                        taskjson = json.loads(describe)
-                        print("#" + str(count) + " Event Based Task name: " + taskjson['name'], flush=True)
-                        print("#" + str(count) + " Event Based ID: " + str(taskjson['ID']), flush=True)
+                        taskjson2 = json.loads(describe)
+                        print("#" + str(count) + " Event Based Task name: " + str(taskjson2['name']), flush=True)
+                        print("#" + str(count) + " Event Based ID: " + str(taskjson2['ID']), flush=True)
                 else:
                     payload = allet[count]
                     url = url_link_final_2 + 'api/eventbasedtasks'
@@ -131,9 +178,10 @@ def CreateEventTask(allet, nameet, url_link_final_2, tenant2key):
                     }
                     response = requests.request("POST", url, headers=headers, data=payload, verify=cert)
                     describe = str(response.text)
-                    taskjson = json.loads(describe)
-                    print("#" + str(count) + " Event Based Task name: " + taskjson['name'], flush=True)
-                    print("#" + str(count) + " Event Based ID: " + str(taskjson['ID']), flush=True)
+                    taskjson2 = json.loads(describe)
+                    print(describe)
+                    print("#" + str(count) + " Event Based Task name: " + str(taskjson2['name']), flush=True)
+                    print("#" + str(count) + " Event Based ID: " + str(taskjson2['ID']), flush=True)
             else:
                 print(describe, flush=True)
                 print(payload, flush=True)

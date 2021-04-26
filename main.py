@@ -31,6 +31,7 @@ from functions.AddPolicytoT2 import AddPolicy
 from functions.Proxyedit import ProxyEdit
 from functions.ListGetCreateST import ListScheduledTask, GetScheduledTask, CreateScheduledTask
 from functions.ListGetCreateEBT import ListEventTask, GetEventTask, CreateEventTask
+from functions.CheckAPIKeysandURL import CheckAPIAccess
     
 ######################CONFIGURATION#############################
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -52,6 +53,10 @@ class Window1(QtGui.QMainWindow):
 		fontTitle = QtGui.QFont()
 		fontTitle.setBold(True)
 		fontTitle.setPointSize(14)
+
+		self.timestr = time.strftime("%Y%m%d-%H%M%S")
+		self.filename = self.timestr + "-attempt"
+		sys.stdout = open("logs/" + self.filename + ".log", "w")
 
 		self.src_title = QtGui.QLabel("Welcome to PH Cloud One Policy\nand Tasks Migration Tool", self)
 		self.src_title.setFont(fontTitle)
@@ -114,10 +119,32 @@ class Window1(QtGui.QMainWindow):
 				self.radioval = i.text()
 
 		if ( (self.src_url_txt1.text() != "") and (self.src_key_txt2.text() != "") and (self.dst_url_txt3.text() != "") and (self.dst_key_txt4.text() != "") and (self.radioval != "") ):
-			
-			self.secondWindow = Window2(self.radioval, self.src_url_txt1.text(), self.src_key_txt2.text(), self.dst_url_txt3.text(), self.dst_key_txt4.text())
-			self.close()
-			self.secondWindow.displayWindow()
+			try:
+
+				if CheckAPIAccess(self.src_url_txt1.text(), self.src_key_txt2.text()):
+					if CheckAPIAccess(self.dst_url_txt3.text(), self.dst_key_txt4.text()):
+						self.secondWindow = Window2(self.radioval, self.src_url_txt1.text(), self.src_key_txt2.text(), self.dst_url_txt3.text(), self.dst_key_txt4.text(), self.filename)
+						self.close()
+						self.secondWindow.displayWindow()
+					else:
+						popupDestination = QtGui.QMessageBox(QtGui.QMessageBox.Critical,
+							"Error",
+							"Error has occured for validating the destination URL and API Key. Check " + self.filename + ".log for more information.",
+							QtGui.QMessageBox.Ok,
+							self)
+						popupDestination.show()
+				else:
+					popupSource = QtGui.QMessageBox(QtGui.QMessageBox.Critical,
+						"Error",
+						"Error has occured for validating the source URL and API Key. Check " + self.filename + ".log for more information.",
+						QtGui.QMessageBox.Ok,
+						self)
+					popupSource.show()
+
+			except Exception as e:
+				var = traceback.format_exc()
+				print(var)
+				print(e)
 
 		else:
 			popup = QtGui.QMessageBox(QtGui.QMessageBox.Warning,
@@ -138,7 +165,7 @@ class Window1(QtGui.QMainWindow):
 
 class Window2(QtGui.QWidget):
 
-	def __init__(self, opt_g, src_url, t1_key, dst_url, t2_key):
+	def __init__(self, opt_g, src_url, t1_key, dst_url, t2_key, log_filename):
 		super(Window2, self).__init__()
 		self.setGeometry(200, 200, 600, 400)
 		self.setWindowTitle("PH Cloud One Migration Tool")
@@ -178,7 +205,7 @@ class Window2(QtGui.QWidget):
 		self.mygroupbox = QtGui.QGroupBox('Elements')
 		self.myform = QtGui.QFormLayout()
 
-		for count, here in self.ofn:
+		for count, here in enumerate(self.ofn):
 			if "}" in self.ofi[count]:
 				self.ifcheckbox = QtGui.QCheckBox(here)
 				self.myform.addRow(self.ifcheckbox)
@@ -204,6 +231,7 @@ class Window2(QtGui.QWidget):
 		self.t1_key = t1_key
 		self.dst_url = dst_url
 		self.t2_key = t2_key
+		self.log_filename = log_filename
 
 		self.btn = QtGui.QPushButton("Start Migration", self)
 		self.btn.clicked.connect(self.passingInformation2)
@@ -220,7 +248,7 @@ class Window2(QtGui.QWidget):
 					if (x.text() == z[1]):
 						self.obj_list.append(int(z[0]))
 
-		self.thirdWindow = Window3(self.obj_list, self.opt_g, self.src_url, self.t1_key, self.dst_url, self.t2_key)
+		self.thirdWindow = Window3(self.obj_list, self.opt_g, self.src_url, self.t1_key, self.dst_url, self.t2_key, self.log_filename)
 	
 		self.close()
 		self.thirdWindow.displayWindow()
@@ -236,7 +264,7 @@ class Window2(QtGui.QWidget):
 
 class Window3(QtGui.QMainWindow):
 
-	def __init__(self, itemIDs, opt_g, src_url, t1_key, dst_url, t2_key):
+	def __init__(self, itemIDs, opt_g, src_url, t1_key, dst_url, t2_key, log_filename):
 		super(Window3, self).__init__()
 		self.setGeometry(200, 200, 600, 400)
 		self.setWindowTitle("PH Cloud One Migration Tool")
@@ -253,6 +281,7 @@ class Window3(QtGui.QMainWindow):
 		self.t1_key = t1_key
 		self.dst_url = dst_url
 		self.t2_key = t2_key
+		self.log_filename = log_filename
 
 		fontTitle = QtGui.QFont()
 		fontTitle.setBold(True)
@@ -280,7 +309,7 @@ class Window3(QtGui.QMainWindow):
 		self.btn2.move(250,350)
 		self.btn2.hide()
 
-		self.ThreadingClass = ThreadingClass(self.opt_g, self.itemIDs, self.src_url, self.t1_key, self.dst_url, self.t2_key)
+		self.ThreadingClass = ThreadingClass(self.opt_g, self.itemIDs, self.src_url, self.t1_key, self.dst_url, self.t2_key, self.log_filename)
 		self.ThreadingClass.start()
 		self.connect(self.ThreadingClass, QtCore.SIGNAL('PERCENTAGE'), self.updateProgressBar)
 		self.connect(self.ThreadingClass, QtCore.SIGNAL('TEXT'), self.updateProgressBarText)
@@ -289,6 +318,11 @@ class Window3(QtGui.QMainWindow):
 		self.close()
 		self.ThreadingClass.quit()
 		self.firstWindow = Window1()
+		del self.firstWindow.timestr
+		self.firstWindow.src_url_txt1.setText(self.src_url)
+		self.firstWindow.src_key_txt2.setText(self.t1_key)
+		self.firstWindow.dst_url_txt3.setText(self.dst_url)
+		self.firstWindow.dst_key_txt4.setText(self.t2_key)
 		self.firstWindow.displayWindow()
 
 	def updateProgressBar(self, val):
@@ -317,7 +351,7 @@ class Window3(QtGui.QMainWindow):
 		return icon
 
 class ThreadingClass(QtCore.QThread):
-	def __init__(self, option, itemIDs, src_url, t1_key, dst_url, t2_key):
+	def __init__(self, option, itemIDs, src_url, t1_key, dst_url, t2_key, log_filename):
 		super(ThreadingClass, self).__init__()
 
 		self.option = option
@@ -326,6 +360,7 @@ class ThreadingClass(QtCore.QThread):
 		self.t1_key = t1_key
 		self.dst_url = dst_url
 		self.t2_key = t2_key
+		self.filename = log_filename
 
 	def run(self):
 		if self.option == "Policies":
@@ -340,9 +375,6 @@ class ThreadingClass(QtCore.QThread):
 			try:
 				completed = 0
 				#FUNCTIONS
-				timestr = time.strftime("%Y%m%d-%H%M%S")
-				filename = timestr + "-attempt"
-				sys.stdout = open("logs/" + filename + ".log", "w")
 				antimalwareconfig, allofpolicy = GetPolicy(self.itemIDs, self.src_url, self.t1_key)
 				completed+=2.5
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
@@ -614,16 +646,14 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.close()
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Migration done!")
-				del timestr
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + self.filename + "_failed.log for details.")
 				var = traceback.format_exc()
 				print(var)
 				print(e)
 				sys.stdout.close()
-				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")
-				del timestr
+				os.rename("logs/" + self.filename + ".log", "logs/" + self.filename + "_failed.log")
 
 		elif self.option == "Scheduled Tasks":
 			try:
@@ -635,9 +665,6 @@ class ThreadingClass(QtCore.QThread):
 					#oldest_file = min(full_path, key=os.path.getctime)
 					#os.remove(oldest_file)
 			try:
-				timestr = time.strftime("%Y%m%d-%H%M%S")
-				filename = timestr + "-attempt"
-				sys.stdout = open("logs/" + filename + ".log", "w")
 				completed = 0
 				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Scheduled Task/s on Source Tenant...")
 				sys.stdout.flush()
@@ -674,16 +701,14 @@ class ThreadingClass(QtCore.QThread):
 				self.emit(QtCore.SIGNAL('TEXT'), "Migration done!")
 				time.sleep(1)
 				sys.stdout.close()
-				del timestr
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + self.filename + "_failed.log for details.")
 				var = traceback.format_exc()
 				print(var)
 				print(e)
 				sys.stdout.close()
-				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")
-				del timestr
+				os.rename("logs/" + self.filename + ".log", "logs/" + self.filename + "_failed.log")
 
 		else:
 			try:
@@ -695,9 +720,6 @@ class ThreadingClass(QtCore.QThread):
 					#oldest_file = min(full_path, key=os.path.getctime)
 					#os.remove(oldest_file)
 			try:
-				timestr = time.strftime("%Y%m%d-%H%M%S")
-				filename = timestr + "-attempt"
-				sys.stdout = open("logs/" + filename + ".log", "w")
 				completed = 0
 				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Event-Based Task/s on Source Tenant...")
 				sys.stdout.flush()
@@ -717,7 +739,8 @@ class ThreadingClass(QtCore.QThread):
 				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Event-Based Task/s on Source Tenant...")
 				sys.stdout.flush()
 				time.sleep(2)
-				allet, nameet = GetEventTask(self.itemIDs, self.src_url, self.t1_key)
+				ofn, ofi = ListAllPolicy(self.src_url, self.t1_key)
+				allet, nameet = GetEventTask(self.itemIDs, ofn, ofi, self.src_url, self.t1_key, self.dst_url, self.t2_key)
 				completed+=30
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Creating Event-Based Task/s on Destination Tenant...")
@@ -735,16 +758,14 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.flush()
 				time.sleep(1)
 				sys.stdout.close()
-				del timestr
 			except Exception as e:
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
-				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + filename + ".log for details.")
+				self.emit(QtCore.SIGNAL('TEXT'), "An error has occurred. See " + self.filename + "_failed.log for details.")
 				var = traceback.format_exc()
 				print(var)
 				print(e)
 				sys.stdout.close()
-				os.rename("logs/" + filename + ".log", "logs/" + filename + "_failed.log")
-				del timestr
+				os.rename("logs/" + self.filename + ".log", "logs/" + self.filename + "_failed.log")
 
 def remove_qt_temporary_files():
     if os.path.exists('qt.conf'):

@@ -53,4 +53,4 @@ def ListAllPolicy(url_link_final, tenant1key):
                         describe = indexpart[endIndex:]
                         '''
 
-    return enumerate(oldpolicyname), oldpolicyid
+    return oldpolicyname, oldpolicyid
