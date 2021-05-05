@@ -32,6 +32,7 @@ from functions.Proxyedit import ProxyEdit
 from functions.ListGetCreateST import ListScheduledTask, GetScheduledTask, CreateScheduledTask
 from functions.ListGetCreateEBT import ListEventTask, GetEventTask, CreateEventTask
 from functions.CheckAPIKeysandURL import CheckAPIAccess
+from functions.ListAllComputerGroup import ListAllCompGroup
     
 ######################CONFIGURATION#############################
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -740,7 +741,8 @@ class ThreadingClass(QtCore.QThread):
 				sys.stdout.flush()
 				time.sleep(2)
 				ofn, ofi = ListAllPolicy(self.src_url, self.t1_key)
-				allet, nameet = GetEventTask(self.itemIDs, ofn, ofi, self.src_url, self.t1_key, self.dst_url, self.t2_key)
+				ocgn, ocgi = ListAllCompGroup(self.src_url, self.t1_key)
+				allet, nameet = GetEventTask(self.itemIDs, ofn, ofi, ocgn, ocgi, self.src_url, self.t1_key, self.dst_url, self.t2_key)
 				completed+=30
 				self.emit(QtCore.SIGNAL('PERCENTAGE'), completed)
 				self.emit(QtCore.SIGNAL('TEXT'), "Creating Event-Based Task/s on Destination Tenant...")
