@@ -32,7 +32,7 @@ from functions.Proxyedit import ProxyEdit
 from functions.ListGetCreateST import ListScheduledTask, GetScheduledTask, CreateScheduledTask
 from functions.ListGetCreateEBT import ListEventTask, GetEventTask, CreateEventTask
 from functions.CheckAPIKeysandURL import CheckAPIAccess
-from functions.ListAllComputerGroup import ListAllCompGroup
+from functions.ListAllComputerGroup import ListAllCompGroup                                                         
     
 ######################CONFIGURATION#############################
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
@@ -56,8 +56,19 @@ class Window1(QtGui.QMainWindow):
 		fontTitle.setPointSize(14)
 
 		self.timestr = time.strftime("%Y%m%d-%H%M%S")
+		self.timestrlogs = time.strftime("%A, %d %B %Y %I:%M%p %Z")
 		self.filename = self.timestr + "-attempt"
+
+		try:
+			os.mkdir("logs")
+		except OSError:
+			list_of_files = os.listdir('logs')
+			full_path = ["logs/{0}".format(x) for x in list_of_files]
+			if len(list_of_files) == 5:
+				oldest_file = min(full_path, key=os.path.getctime)
+				os.remove(oldest_file)
 		sys.stdout = open("logs/" + self.filename + ".log", "w")
+		print("PH CLoud One Migration Tool logs - " + self.timestrlogs, flush=True)
 
 		self.src_title = QtGui.QLabel("Welcome to PH Cloud One Policy\nand Tasks Migration Tool", self)
 		self.src_title.setFont(fontTitle)
@@ -366,14 +377,6 @@ class ThreadingClass(QtCore.QThread):
 	def run(self):
 		if self.option == "Policies":
 			try:
-				os.mkdir("logs")
-			except OSError:
-				list_of_files = os.listdir('logs')
-				#full_path = ["logs/{0}".format(x) for x in list_of_files]
-				#if len(list_of_files) == 5:
-					#oldest_file = min(full_path, key=os.path.getctime)
-					#os.remove(oldest_file)
-			try:
 				completed = 0
 				#FUNCTIONS
 				antimalwareconfig, allofpolicy = GetPolicy(self.itemIDs, self.src_url, self.t1_key)
@@ -658,14 +661,6 @@ class ThreadingClass(QtCore.QThread):
 
 		elif self.option == "Scheduled Tasks":
 			try:
-				os.mkdir("logs")
-			except OSError:
-				list_of_files = os.listdir('logs')
-				#full_path = ["logs/{0}".format(x) for x in list_of_files]
-				#if len(list_of_files) == 5:
-					#oldest_file = min(full_path, key=os.path.getctime)
-					#os.remove(oldest_file)
-			try:
 				completed = 0
 				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Scheduled Task/s on Source Tenant...")
 				sys.stdout.flush()
@@ -712,14 +707,6 @@ class ThreadingClass(QtCore.QThread):
 				os.rename("logs/" + self.filename + ".log", "logs/" + self.filename + "_failed.log")
 
 		else:
-			try:
-				os.mkdir("logs")
-			except OSError:
-				list_of_files = os.listdir('logs')
-				#full_path = ["logs/{0}".format(x) for x in list_of_files]
-				#if len(list_of_files) == 5:
-					#oldest_file = min(full_path, key=os.path.getctime)
-					#os.remove(oldest_file)
 			try:
 				completed = 0
 				self.emit(QtCore.SIGNAL('TEXT'), "Fetching Event-Based Task/s on Source Tenant...")
