@@ -57,7 +57,7 @@ def AmConfigCheck(allamconfig, directorylist, alldirectorynew, fileextentionlist
         count1 = 0
         index = describe.find('\"fileExtensionListID\"')
         if index != -1:
-            indexpart = describe[index+21 :]
+            indexpart = describe[index+21:]
             startIndex = indexpart.find(':')
             if startIndex != -1: #i.e. if the first quote was found
                 endIndex = indexpart.find(',', startIndex + 1)
