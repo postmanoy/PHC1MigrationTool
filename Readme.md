@@ -30,4 +30,5 @@ Pull requests are welcome. For major changes, please open an issue first to disc
 
 ## Known Issues
 
-All migrated policies will be under the base policy if they have a parent policy. If not, they will be migrated as it is.
+* All migrated policies will be under the base policy if they have a parent policy. If not, they will be migrated as it is.
+* Scheduled Task migration is currently not working.
