@@ -1,6 +1,6 @@
 # Overview
 
-This tool is not official, this was created by the PH Cloud One Support team for better customer support in migration cases. 
+This tool is not official, this was created by the PH Cloud One Support team for better customer support in migration cases. This project is provided on an ‘AS IS’ and ‘WHEN AVAILABLE’ basis. If there are any issue found with the tool, we might not be able to provide immidiate fix for it. But please do provide some feedback on it, so we can improve upon it if possible.
 
 ## Purpose
 The tool is intended for migrating policies and tasks from an existing DS Setup (On Premise, Cloud One Workload Security, AWS/Azure) to a newly deployed destination environment (On Premise, Cloud One Workload Security, AWS/Azure). 
