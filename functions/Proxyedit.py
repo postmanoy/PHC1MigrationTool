@@ -26,20 +26,23 @@ def ProxyEdit(allofpolicy, t1iplistid, t2iplistid, t1portlistid, t2portlistid):
             here = policyjson['policySettings']['firewallSettingReconnaissanceExcludeIpListId']['value']
             if here:
                 if here != 'NONE':
-                    indexnum = t1iplistid.index(here)
-                    policyjson['policySettings']['firewallSettingReconnaissanceExcludeIpListId']['value'] = t2iplistid[indexnum]
+                    if here != 'None':
+                        indexnum = t1iplistid.index(here)
+                        policyjson['policySettings']['firewallSettingReconnaissanceExcludeIpListId']['value'] = t2iplistid[indexnum]
 
             here = policyjson['policySettings']['firewallSettingReconnaissanceIncludeIpListId']['value']
             if here:
                 if here != 'NONE':
-                    indexnum = t1iplistid.index(here)
-                    policyjson['policySettings']['firewallSettingReconnaissanceIncludeIpListId']['value'] = t2iplistid[indexnum]
+                    if here != 'ALL':
+                        indexnum = t1iplistid.index(here)
+                        policyjson['policySettings']['firewallSettingReconnaissanceIncludeIpListId']['value'] = t2iplistid[indexnum]
 
             here = policyjson['policySettings']['firewallSettingEventLogFileIgnoreSourceIpListId']['value']
             if here:
                 if here != 'NONE':
-                    indexnum = t1iplistid.index(here)
-                    policyjson['policySettings']['firewallSettingEventLogFileIgnoreSourceIpListId']['value'] = t2iplistid[indexnum]
+                    if here != 'None':
+                        indexnum = t1iplistid.index(here)
+                        policyjson['policySettings']['firewallSettingEventLogFileIgnoreSourceIpListId']['value'] = t2iplistid[indexnum]
 
             here = policyjson['policySettings']['webReputationSettingMonitorPortListId']['value']
             if here:
