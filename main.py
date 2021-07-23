@@ -68,7 +68,7 @@ class Window1(QtGui.QMainWindow):
 				oldest_file = min(full_path, key=os.path.getctime)
 				os.remove(oldest_file)
 		sys.stdout = open("logs/" + self.filename + ".log", "w")
-		print("PH CLoud One Migration Tool logs - " + self.timestrlogs, flush=True)
+		print("PH Cloud One Migration Tool logs - " + self.timestrlogs, flush=True)
 
 		self.src_title = QtGui.QLabel("Welcome to PH Cloud One Policy\nand Tasks Migration Tool", self)
 		self.src_title.setFont(fontTitle)
@@ -214,7 +214,10 @@ class Window2(QtGui.QWidget):
 		self.src_title.adjustSize()
 		self.src_title.move(110,10)
 
-		self.mygroupbox = QtGui.QGroupBox('Elements')
+		self.mygroupbox = QtGui.QGroupBox('Select All (double-click to select all)')
+		self.mygroupbox.toggled.connect(self.onToggled)
+		self.mygroupbox.setCheckable(True)
+
 		self.myform = QtGui.QFormLayout()
 
 		for count, here in enumerate(self.ofn):
@@ -249,6 +252,11 @@ class Window2(QtGui.QWidget):
 		self.btn.clicked.connect(self.passingInformation2)
 		self.btn.resize(self.btn.minimumSizeHint())
 		self.btn.move(250,350)
+
+	def onToggled(self, on):
+		for box in self.sender().findChildren(QtGui.QCheckBox):
+			box.setChecked(on)
+			box.setEnabled(True)
 
 	def passingInformation2(self):
 		self.obj_list = []
