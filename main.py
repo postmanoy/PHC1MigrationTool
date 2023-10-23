@@ -70,7 +70,7 @@ class Window1(QtWidgets.QMainWindow):
 				oldest_file = min(full_path, key=os.path.getctime)
 				os.remove(oldest_file)
 		sys.stdout = open("logs/" + self.filename + ".log", "w")
-		print("PH CLoud One Migration Tool logs - " + self.timestrlogs, flush=True)
+		print("PH Cloud One Migration Tool logs - " + self.timestrlogs, flush=True)
 
 		self.src_title = QtWidgets.QLabel("Welcome to PH Cloud One Policy\nand Tasks Migration Tool", self)
 		self.src_title.setFont(fontTitle)
@@ -252,6 +252,11 @@ class Window2(QtWidgets.QWidget):
 		self.btn.clicked.connect(self.passingInformation2)
 		self.btn.resize(self.btn.minimumSizeHint())
 		self.btn.move(250,350)
+
+	def onToggled(self, on):
+		for box in self.sender().findChildren(QtGui.QCheckBox):
+			box.setChecked(on)
+			box.setEnabled(True)
 
 	def passingInformation2(self):
 		self.obj_list = []

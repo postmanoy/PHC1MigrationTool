@@ -30,46 +30,6 @@ def MacListGet(url_link_final, tenant1key):
         print("#" + str(count) + " Mac List name: " + str(here['name']), flush=True)
         t1maclistid.append(str(here['ID']))
         print("#" + str(count) + " Mac List ID: " + str(here['ID']), flush=True)
-
-    '''
-    index = describe.find('\"macLists\"')
-    if index != -1:
-        indexpart = describe[index+10:]
-        startIndex = 0
-        while startIndex != -1: 
-            startIndex = indexpart.find('{')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find('}', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex:endIndex+1]
-                    t1maclistall.append(str(indexid))
-                    indexpart = indexpart[endIndex:]
-    count = 0
-    while index != -1:
-        index = describe2.find('\"name\"')
-        if index != -1:
-            indexpart = describe2[index+6:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-1]
-                    t1maclistname.append(str(indexid))
-                    print("#" + str(count) + " Mac List name: " + indexid, flush=True)
-                    describe2 = indexpart[endIndex:]
-                    index = describe2.find('\"ID\"')
-                    if index != -1:
-                        indexpart = describe2[index+3:]
-                        startIndex = indexpart.find(':')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find('}', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid = indexpart[startIndex+1:endIndex]
-                                t1maclistid.append(str(indexid))
-                                print("#" + str(count) + " Mac List ID: " + indexid, flush=True)
-                                describe2 = indexpart[endIndex:]
-        count += 1
-        '''
     #print(t1maclistid)
     print("Done!", flush=True)
     return t1maclistall, t1maclistname, t1maclistid
