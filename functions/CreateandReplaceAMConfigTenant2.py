@@ -42,46 +42,6 @@ def AmconfigTenant2(allamconfig, url_link_final_2, tenant2key):
                         else:
                             print(describe, flush=True)
                             namecheck = -1
-                    '''
-                    index = describe.find('name already exists')
-                    if index != -1:
-                        describe1 = allamconfig[count]
-                        index = describe1.find('name')
-                        if index != -1:
-                            indexpart = describe1[index+5:]
-                            startIndex = indexpart.find('\"')
-                            if startIndex != -1: #i.e. if the first quote was found
-                                endIndex = indexpart.find(',', startIndex + 1)
-                                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                    indexid = indexpart[startIndex+1:endIndex-1]
-                                    startIndex2 = indexid.find('(')
-                                    if startIndex2 != -1:
-                                        endIndex2 = indexid.find(')', startIndex2 + 1)
-                                        if startIndex2 != -1 and endIndex2 != -1: #i.e. both quotes were found
-                                            indexid = indexid[startIndex2+1:endIndex2]
-                                            dirlist = describe1[:index+5+startIndex+startIndex2+1] + str(rename) + describe1[index+5+startIndex+startIndex2+endIndex2-2:]
-                                            rename = rename + 1
-                                    else:
-                                        newname = indexid + " (" + str(rename) + ")"
-                                        dirlist = describe1[:index+5+startIndex+1] + newname + describe1[index+5+startIndex+endIndex-2:]
-                                        rename = rename + 1
-                    index = describe.find('\"ID\"')
-                    if index != -1:
-                        indexpart = describe[index+4:]
-                        startIndex = indexpart.find(':')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find(',', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid = indexpart[startIndex+1:endIndex]
-                                allamconfignew.append(str(indexid))
-                                namecheck = -1
-                            else:   
-                                endIndex = indexpart.find('}', startIndex + 1)
-                                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                    indexid = indexpart[startIndex+1:endIndex]
-                                    allamconfignew.append(str(indexid))   
-                                    namecheck = -1
-                                    '''
     print("New AM Config ID", flush=True)
     print(allamconfignew, flush=True)
     return allamconfignew

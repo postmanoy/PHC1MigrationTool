@@ -35,7 +35,21 @@ def CheckAPIAccess(url_specified, tenantkey):
 		if "active" and "true" in response.text:
 			result = True
 		else:
-			result = False
+			payload={}
+			headers = {
+            "Authorization": "ApiKey " + tenantkey,
+            "api-version": "v1",
+            "Content-Type": "application/json",
+            }
+			response = requests.request("GET", url, headers=headers, data=payload, verify=cert)
+			print("For API Key: " + final_Tkey, flush=True)
+			print(response.text, flush=True)
+			print("", flush=True)
+
+			if "active" and "true" in response.text:
+				result = True
+			else:
+				result = False
 	except Exception as e:
 		print("For API Key: " + final_Tkey, flush=True)
 		print(e, flush=True)

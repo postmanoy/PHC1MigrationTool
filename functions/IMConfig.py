@@ -16,26 +16,6 @@ def IMGet(allofpolicy):
         if 'ruleIDs' in namejson['integrityMonitoring']: 
             for count, here2 in enumerate(namejson['integrityMonitoring']['ruleIDs']):
                 imruleid.append(str(here2))
-        '''
-        index = describe.find('\"integrityMonitoring\"')
-        if index != -1:
-            indexpart = describe[index+20:]
-            startIndex = indexpart.find('}')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find('}', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex]
-                    index = indexid.find('ruleIDs')
-                    if index != -1:
-                        indexpart = indexid[index+9:]
-                        startIndex = indexpart.find('[')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find(']', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid1 = indexpart[startIndex+1:endIndex]
-                                indexid2 = indexid1.split(",")
-                                imruleid.extend(indexid2)
-                                '''
     imruleid = list(dict.fromkeys(imruleid))
     print(imruleid, flush=True)
     return imruleid
@@ -62,18 +42,6 @@ def IMDescribe(imruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
             imjson = json.loads(describe)
             allimrulename.append(str(imjson['name']))
             print("#" + str(count) + " IPS rule name: " + str(imjson['name']), flush=True)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find('\"description\"', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-2]
-                        allimrulename.append(str(indexid))
-                        print("#" + str(count) + " IM rule name: " + indexid, flush=True)
-                        '''
             print("#" + str(count) + " IM rule ID: " + str(dirlist), flush=True)
     print("Done!", flush=True)        
     print("Searching and Modifying IM rule in Tenant 2...", flush=True)        
@@ -150,8 +118,6 @@ def IMCustom(allimrule, allimcustomrule, url_link_final_2, tenant2key):
                 print(describe, flush=True)
                 print(payload, flush=True)
         print("Done!", flush=True)
-    #print("all new im rule custom rule", flush=True)
-    #print(allimruleidnew2, flush=True)
     
     return allimruleidnew2
 

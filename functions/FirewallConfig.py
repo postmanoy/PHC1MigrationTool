@@ -20,35 +20,7 @@ def FirewallGet(allofpolicy):
         if 'ruleIDs' in namejson['firewall']: 
             for count, here2 in enumerate(namejson['firewall']['ruleIDs']):
                 firewallruleid.append(str(here2))
-        '''
-        index = describe.find('\"firewall\"')
-        if index != -1:
-            indexpart = describe[index+9:]
-            startIndex = indexpart.find('}')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find('}', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex]
-                    index = indexid.find('globalStatefulConfigurationID')
-                    if index != -1:
-                        indexpart = indexid[index+29:]
-                        startIndex = indexpart.find(':')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find(',', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid1 = indexpart[startIndex+1:endIndex]
-                                policystateful.append(str(indexid1))
-                    index = indexid.find('ruleIDs')
-                    if index != -1:
-                        indexpart = indexid[index+9:]
-                        startIndex = indexpart.find('[')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find(']', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid1 = indexpart[startIndex+1:endIndex]
-                                indexid2 = indexid1.split(",")
-                                firewallruleid.extend(indexid2)
-                                '''
+
     firewallruleid = list(dict.fromkeys(firewallruleid))
     print(firewallruleid, flush=True)
     return firewallruleid, policystateful
@@ -76,18 +48,6 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
             firewalljson = json.loads(describe)
             allfirewallrulename.append(str(firewalljson['name']))
             print("#" + str(count) + " Firewall rule name: " + str(firewalljson['name']), flush=True)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-1]
-                        allfirewallrulename.append(str(indexid))
-                        print("#" + str(count) + " Firewall rule name: " + str(indexid), flush=True)
-                        '''
             print("#" + str(count) + " Firewall rule ID: " + dirlist, flush=True)
 
         
@@ -124,80 +84,6 @@ def FirewallDescribe(firewallruleid, t1iplistid, t2iplistid, t1maclistid, t2macl
             
         describe = json.dumps(firewalljson)
 
-        """
-        index3 = describe.find('sourceIPListID')
-        if index3 != -1:
-            indexpart = describe[index3+14:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+14+endIndex3]
-                    indexnum = t1iplistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2iplistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        index3 = describe.find('sourceMACListID')
-        if index3 != -1:
-            indexpart = describe[index3+15:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+15+endIndex3]
-                    indexnum = t1maclistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2maclistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        index3 = describe.find('sourcePortListID')
-        if index3 != -1:
-            indexpart = describe[index3+16:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+16+endIndex3]
-                    indexnum = t1portlistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2portlistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        index3 = describe.find('destinationIPListID')
-        if index3 != -1:
-            indexpart = describe[index3+19:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+19+endIndex3]
-                    indexnum = t1iplistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2iplistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        index3 = describe.find('destinationMACListID')
-        if index3 != -1:
-            indexpart = describe[index3+20:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+20+endIndex3]
-                    indexnum = t1maclistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2maclistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        index3 = describe.find('destinationPortListID')
-        if index3 != -1:
-            indexpart = describe[index3+21:]
-            startIndex = indexpart.find(':')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex3 = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                    indexid1 = indexpart[startIndex+1:endIndex3]
-                    indexid5 = describe[index3:index3+21+endIndex3]
-                    indexnum = t1portlistid.index(indexid1)
-                    listpart = indexid5.replace(indexid1, t2portlistid[indexnum])
-                    describe = describe.replace(indexid5, listpart)
-        """
         allfirewallrule[count] = describe
     for count, dirlist in enumerate(allfirewallrulename):
         payload = "{\"searchCriteria\": [{\"fieldName\": \"name\",\"stringValue\": \"" + dirlist + "\"}]}"
@@ -319,49 +205,5 @@ def FirewallReplace(allofpolicy, allfirewallruleidnew1, allfirewallruleidnew2, f
                             checkindex1 = allfirewallcustomrule.index(checkindex)
                             taskjson['firewall']['ruleIDs'][count1] = allfirewallruleidnew2[checkindex1]
             allofpolicy[count] = json.dumps(taskjson)
-            '''
-            index = describe.find('\"firewall\"')
-            if index != -1:
-                indexpart = describe[index+9:]
-                startIndex = indexpart.find('}')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find('}', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex]
-                        index3 = indexid.find('globalStatefulConfigurationID')
-                        if index3 != -1:
-                            indexpart = indexid[index3+29:]
-                            startIndex = indexpart.find(':')
-                            if startIndex != -1: #i.e. if the first quote was found
-                                endIndex3 = indexpart.find(',', startIndex + 1)
-                                if startIndex != -1 and endIndex3 != -1: #i.e. both quotes were found
-                                    indexid1 = indexpart[startIndex+1:endIndex3]
-                                    indexid5 = indexid[index3:index3+29+endIndex3]
-                                    indexnum = t1statefulid.index(indexid1)
-                                    statefulpart = indexid5.replace(indexid1, t2statefulid[indexnum])
-                                    describe = describe.replace(indexid5, statefulpart)
-                        index2 = indexid.find('ruleIDs')
-                        if index2 != -1:
-                            indexpart2 = indexid[index2+9:]
-                            startIndex2 = indexpart2.find('[')
-                            if startIndex2 != -1: #i.e. if the first quote was found
-                                endIndex2 = indexpart2.find(']', startIndex2 + 1)
-                                if startIndex2 != -1 and endIndex2 != -1: #i.e. both quotes were found
-                                    indexid2 = indexpart2[startIndex2+1:endIndex2]
-                                    indexid3 = indexpart2[startIndex2+1:endIndex2]
-                                    indexid4 = indexid2.split(",")
-                                    if allfirewallruleidnew1 or allfirewallruleidnew2:
-                                        for count1, this in enumerate(indexid4):
-                                            checkindex = firewallruleid.index(this)
-                                            if checkindex in allfirewallruleidold:
-                                                checkindex1 = allfirewallruleidold.index(checkindex)
-                                                indexid4[count1] = allfirewallruleidnew1[checkindex1]
-                                            elif checkindex in allfirewallcustomrule:
-                                                checkindex1 = allfirewallcustomrule.index(checkindex)
-                                                indexid4[count1] = allfirewallruleidnew2[checkindex1]
-                                        indexid2 = ",".join(indexid4)
-                                    modulepart = describe[index:index+9+endIndex]
-                                    modulepart2 = modulepart.replace(indexid3, indexid2)
-                                    allofpolicy[count] = describe.replace(modulepart, modulepart2)
-                                    '''
+           
     return allofpolicy

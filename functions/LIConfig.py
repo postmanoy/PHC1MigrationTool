@@ -17,26 +17,6 @@ def LIGet(allofpolicy):
         if 'ruleIDs' in namejson['logInspection']: 
             for count, here2 in enumerate(namejson['logInspection']['ruleIDs']):
                 liruleid.append(str(here2))
-        '''
-        index = describe.find('\"logInspection\"')
-        if index != -1:
-            indexpart = describe[index+14:]
-            startIndex = indexpart.find('}')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find('}', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex]
-                    index = indexid.find('ruleIDs')
-                    if index != -1:
-                        indexpart = indexid[index+9:]
-                        startIndex = indexpart.find('[')
-                        if startIndex != -1: #i.e. if the first quote was found
-                            endIndex = indexpart.find(']', startIndex + 1)
-                            if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                                indexid1 = indexpart[startIndex+1:endIndex]
-                                indexid2 = indexid1.split(",")
-                                liruleid.extend(indexid2)
-                                '''
     liruleid = list(dict.fromkeys(liruleid))
     print(liruleid, flush=True) 
     return liruleid
@@ -63,18 +43,6 @@ def LIDescribe(liruleid, url_link_final, tenant1key, url_link_final_2, tenant2ke
             lijson = json.loads(describe)
             alllirulename.append(str(lijson['name']))
             print("#" + str(count) + " LI rule name: " + str(lijson['name']), flush=True)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find('\"description\"', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-2]
-                        alllirulename.append(str(indexid))
-                        print("#" + str(count) + " LI rule name: " + indexid, flush=True)
-                        '''
             print("#" + str(count) + " LI rule ID: " + dirlist, flush=True)
     print("Done!", flush=True)        
     print("Searching and Modifying LI rule in Tenant 2...", flush=True)  

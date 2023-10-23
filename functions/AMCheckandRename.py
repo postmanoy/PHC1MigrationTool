@@ -108,16 +108,4 @@ def RenameAmConfig(allamconfig):
             amjson['name'] = amjson['name'] + " - Migrated"
             allamconfig[count] = json.dumps(amjson)
             count = count + 1
-        '''    
-        index = describe.find('name')
-        if index != -1:
-            indexpart = describe[index+5:]
-            startIndex = indexpart.find('\"')
-            if startIndex != -1: #i.e. if the first quote was found
-                endIndex = indexpart.find(',', startIndex + 1)
-                if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                    indexid = indexpart[startIndex+1:endIndex-1]
-                    newname = indexid + " - Migrated"
-                    allamconfig[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
-                    '''
     return allamconfig

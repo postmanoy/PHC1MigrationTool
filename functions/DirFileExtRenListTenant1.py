@@ -72,19 +72,7 @@ def RenameLists(alldirectory, allfilelist, allfileextention):
         for describe in alldirectory:
             descjson = json.loads(describe)
             descjson['name'] = descjson['name'] + " - Migrated"
-            alldirectory[count] = json.dumps(descjson)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-1]
-                        newname = indexid + " - Migrated"
-                        alldirectory[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]         
-                        '''         
+            alldirectory[count] = json.dumps(descjson) 
             count = count + 1
     
     count = 0
@@ -93,18 +81,7 @@ def RenameLists(alldirectory, allfilelist, allfileextention):
             descjson = json.loads(describe)
             descjson['name'] = descjson['name'] + " - Migrated"
             allfilelist[count] = json.dumps(descjson)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-1]
-                        newname = indexid + " - Migrated"
-                        allfilelist[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]
-                        '''
+
             count = count + 1
     count = 0
     if allfileextention:
@@ -112,17 +89,5 @@ def RenameLists(alldirectory, allfilelist, allfileextention):
             descjson = json.loads(describe)
             descjson['name'] = descjson['name'] + " - Migrated"
             allfileextention[count] = json.dumps(descjson)
-            '''
-            index = describe.find('name')
-            if index != -1:
-                indexpart = describe[index+5:]
-                startIndex = indexpart.find('\"')
-                if startIndex != -1: #i.e. if the first quote was found
-                    endIndex = indexpart.find(',', startIndex + 1)
-                    if startIndex != -1 and endIndex != -1: #i.e. both quotes were found
-                        indexid = indexpart[startIndex+1:endIndex-1]
-                        newname = indexid + " - Migrated"
-                        allfileextention[count] = describe[:index+5+startIndex+1] + newname + describe[index+5+startIndex+endIndex-2:]  
-                        '''
             count = count + 1
     return alldirectory, allfilelist, allfileextention
